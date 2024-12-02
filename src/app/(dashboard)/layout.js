@@ -6,35 +6,24 @@ import '@/styles/globals.css'
 import { Toaster } from 'sonner'
 import { ReduxProvider } from '@/redux/Provider'
 import Script from 'next/script'
-import { GoogleOAuthProvider } from '@react-oauth/google'
 import CheckTokenValidity from '@/components/auth/CheckTokenValidity'
+import Sidebar from '@/components/dashboard/Sidebar'
 import ProtectedRoutes from '@/components/routes/ProtectedRoutes'
 
-export const metadata = {
-  title: {
-    template: '%s - BackupDoc',
-    default: 'BackupDoc',
-  },
-  description:
-    'Empowering dentists to provide trustworthy care, enhance patient understanding, and increase retention through AI-supported diagnostics.',
-}
-
-export default function RootLayout({ children }) {
+export default function Layout({ children }) {
   return (
     <html
       lang='en'
       className={clsx('scroll-smooth', GeistSans.variable, GeistMono.variable)}
     >
+      {/* add favicon */}
+      <link rel='icon' href='./favicon.ico' />
       <body className='bg-zinc-900'>
         <Toaster />
         <ReduxProvider>
           <CheckTokenValidity />
           <ProtectedRoutes />
-          <GoogleOAuthProvider
-            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-          >
-            {children}
-          </GoogleOAuthProvider>
+          <Sidebar>{children}</Sidebar>
         </ReduxProvider>
         <Script
           src='https://checkout.razorpay.com/v1/checkout.js'

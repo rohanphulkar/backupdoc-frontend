@@ -1,166 +1,330 @@
-import React, { useState } from 'react'
-import AccuracyChecking from './AccuracyChecking' // Import AccuracyChecking component
+import React, { useEffect, useState, useMemo, useRef } from 'react'
+import AccuracyChecking from './AccuracyChecking'
 import { Switch } from '@headlessui/react'
+import { api } from '@/api/api'
+import { useSelector } from 'react-redux'
+import { toast } from 'sonner'
+import { EnvelopeIcon, PrinterIcon } from '@heroicons/react/24/outline'
+import { Loading02Icon } from 'hugeicons-react'
 
-const AnalysisDashboard = ({
-  image, // Selected image for analysis
-  onClose, // Function to close the analysis view
-  previousImages = [], // Array of previous images passed from ImageDashboard
-  userCredits, // User's credits (from ImageDashboard)
-  selectedPatientName, // Selected patient's name (from ImageDashboard)
-}) => {
-  const [accuracyLevel, setAccuracyLevel] = useState(50) // Default accuracy level
-  const [enabledOne, setEnabledOne] = useState(false) // First switch state
-  const [enabledTwo, setEnabledTwo] = useState(false) // Second switch state
+const AnalysisDashboard = ({ id }) => {
+  const [accuracyLevel, setAccuracyLevel] = useState(0)
+  const [enabledOne, setEnabledOne] = useState(false)
+  const [enabledTwo, setEnabledTwo] = useState(false)
+  const [prediction, setPrediction] = useState(null)
+  const [legends, setLegends] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [imageScale, setImageScale] = useState(1)
+  const token = useSelector((state) => state.auth.token)
 
-  // Update accuracy level on mouse move
-  const handleAccuracyChange = (e) => {
-    const accuracy = Math.min(
-      Math.max(0, (e.clientX / window.innerWidth) * 100),
-      100
-    ) // Calculate the percentage based on mouse position
-    setAccuracyLevel(accuracy)
+  const getColorsByPercentage = (percentage) => {
+    if (percentage >= 0 && percentage < 1) {
+      return {
+        bg: 'bg-red-500/20',
+        hover: 'hover:bg-red-500/30',
+        dot: 'bg-red-500',
+        text: 'text-red-400',
+      }
+    }
+    if (percentage >= 1 && percentage < 15) {
+      return {
+        bg: 'bg-orange-500/20',
+        hover: 'hover:bg-orange-500/30',
+        dot: 'bg-orange-500',
+        text: 'text-orange-400',
+      }
+    }
+    if (percentage >= 15 && percentage < 60) {
+      return {
+        bg: 'bg-blue-500/20',
+        hover: 'hover:bg-blue-500/30',
+        dot: 'bg-blue-500',
+        text: 'text-blue-400',
+      }
+    }
+    if (percentage >= 60) {
+      return {
+        bg: 'bg-green-500/20',
+        hover: 'hover:bg-green-500/30',
+        dot: 'bg-green-500',
+        text: 'text-green-400',
+      }
+    }
+    // Default case
+    return {
+      bg: 'bg-gray-500/20',
+      hover: 'hover:bg-gray-500/30',
+      dot: 'bg-gray-500',
+      text: 'text-gray-400',
+    }
   }
 
-  // Legend Data: Room names with percentage and colors
-  const legends = [
-    { name: 'Living Room', percentage: 50, color: 'bg-green-500' },
-    { name: 'Kitchen', percentage: 70, color: 'bg-blue-500' },
-    { name: 'Attic', percentage: 40, color: 'bg-yellow-500' },
-    { name: 'Garage', percentage: 30, color: 'bg-red-500' },
-    { name: 'Basement', percentage: 60, color: 'bg-purple-500' },
-  ]
+  const filteredLegends = useMemo(() => {
+    return legends
+      .filter((legend) => legend.percentage >= accuracyLevel)
+      .sort((a, b) => b.percentage - a.percentage)
+  }, [legends, accuracyLevel])
+
+  const fetchPrediction = async () => {
+    try {
+      setLoading(true)
+      const { data: result, status } = await api.get(
+        `/predict/get-prediction/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      if (status === 200) {
+        setPrediction(result.prediction)
+        setLegends(result.labels)
+      } else {
+        toast.error('Something went wrong!')
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (id && token) {
+      fetchPrediction()
+    }
+  }, [id, token])
+
+  const handleAccuracyChange = (value) => {
+    const thresholds = [0, 1, 15, 60]
+    const nearestThreshold = thresholds.reduce((prev, curr) =>
+      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+    )
+    setAccuracyLevel(nearestThreshold)
+  }
+
+  const handleZoomIn = () => setImageScale((prev) => Math.min(prev + 0.1, 2))
+  const handleZoomOut = () => setImageScale((prev) => Math.max(prev - 0.1, 0.5))
+
+  const windowRef = useRef(null)
+
+  const handlePrint = () => {
+    const printContent = windowRef.current
+    const originalContents = document.body.innerHTML
+
+    if (printContent) {
+      document.body.innerHTML = printContent.innerHTML
+      window.print()
+      document.body.innerHTML = originalContents
+      window.location.reload() // Reload to restore React functionality
+    }
+  }
+  const [sendingEmail, setSendingEmail] = useState(false)
+
+  const handleReportEmail = async (prediction_id) => {
+    try {
+      setSendingEmail(true)
+      const { status } = await api.get(
+        `/predict/make-report/${prediction_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      if (status === 200) {
+        toast.success('Report has been sent to your email.')
+      } else {
+        toast.error('Something went wrong!')
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
+    } finally {
+      setSendingEmail(false)
+    }
+  }
 
   return (
-    <div className='relative flex flex-col bg-gray-100 dark:bg-gray-800'>
-      <div className='p-6'>
-        <div className='flex items-start justify-between space-x-6'>
-          {/* Left Side: Selected Image and Previous Images Grid */}
-          <div className='flex w-3/4 flex-col items-center'>
-            {/* Display the selected image for analysis */}
-            {image && (
-              <div className='relative mb-4 flex flex-col items-center'>
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt='Selected for Analysis'
-                  className='h-[400px] w-[500px] rounded-lg object-cover shadow-xl'
-                />
+    <div
+      ref={windowRef}
+      className='relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 p-6 backdrop-blur-xl'
+    >
+      <div className='mx-auto max-w-7xl'>
+        <div className='flex flex-col gap-6 lg:flex-row'>
+          {/* Left Column - Image Display */}
+          <div className='lg:w-3/4'>
+            {prediction ? (
+              <div className='relative rounded-2xl bg-gray-800/50 p-4 shadow-xl backdrop-blur-lg'>
+                <div className='absolute right-6 top-6 z-10 flex gap-2'>
+                  <button
+                    onClick={handleZoomIn}
+                    className='rounded-lg bg-gray-700/50 p-1.5 text-base font-bold text-white hover:bg-gray-600/50'
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={handleZoomOut}
+                    className='rounded-lg bg-gray-700/50 p-1.5 text-base font-bold text-white hover:bg-gray-600/50'
+                  >
+                    -
+                  </button>
+                </div>
+                <div className='max-h-[85vh] overflow-auto'>
+                  <img
+                    src={prediction.predicted_image}
+                    alt='Analyzed Image'
+                    style={{ transform: `scale(${imageScale})` }}
+                    className='h-auto w-full rounded-lg object-contain shadow-lg transition-transform duration-200'
+                  />
+                </div>
               </div>
-            )}
-
-            {/* Grid of previous images */}
-            {previousImages.length > 0 && (
-              <div className='mb-4 grid grid-cols-8 gap-4 bg-white shadow-xl'>
-                {previousImages.map((img, index) => (
-                  <div key={index} className='relative p-2'>
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt={`Previous Upload ${index}`}
-                      className='h-16 w-16 cursor-pointer object-cover'
-                      onClick={() => console.log('Previous Image clicked')}
-                    />
-                  </div>
-                ))}
+            ) : (
+              <div className='flex h-96 items-center justify-center rounded-2xl bg-gray-800/50 p-4 backdrop-blur-lg'>
+                <div className='animate-pulse text-base text-gray-400'>
+                  Loading analysis...
+                </div>
               </div>
             )}
           </div>
 
-          {/* Right Side: Accuracy Checking and Legends */}
-          <div className='flex w-1/4 flex-col space-y-4'>
-            {/* Accuracy Checking Section */}
-            <div className='relative mb-4'>
-              <AccuracyChecking
-                accuracyLevel={accuracyLevel}
-                onAccuracyChange={handleAccuracyChange}
-              />
+          {/* Right Column - Controls & Info */}
+          <div className='space-y-4 lg:w-1/4'>
+            {/* Accuracy Slider */}
+            <div className='rounded-2xl bg-gray-800/50 p-4 shadow-xl backdrop-blur-lg'>
+              <h3 className='mb-3 text-base font-semibold text-white'>
+                Accuracy Threshold
+              </h3>
+              <div className='flex items-center gap-3'>
+                <input
+                  type='range'
+                  min='0'
+                  max='60'
+                  step='1'
+                  value={accuracyLevel}
+                  onChange={(e) => handleAccuracyChange(Number(e.target.value))}
+                  className='h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-700/50 accent-pink-500'
+                />
+                <input
+                  type='number'
+                  min='0'
+                  max='60'
+                  value={accuracyLevel}
+                  onChange={(e) => handleAccuracyChange(Number(e.target.value))}
+                  className='w-16 rounded border border-gray-600/50 bg-gray-700/50 px-2 py-1 text-center text-sm text-white backdrop-blur-sm'
+                />
+              </div>
             </div>
 
-            {/* Legends Section */}
-            <div className='rounded-lg bg-white p-4 shadow-xl'>
-              {legends.map((legend, index) => (
-                <div key={index}>
-                  <div className='flex items-center space-x-3'>
-                    <div className={`h-4 w-4 ${legend.color}`}></div>
-                    <span className='flex-1 font-semibold text-gray-700 dark:text-gray-300'>
-                      {legend.name}
-                    </span>
-                    <span className='text-sm text-gray-500'>
-                      {legend.percentage}%
-                    </span>
-                    <input
-                      type='checkbox'
-                      className='h-4 w-4 accent-blue-500' // Tailwind styling for the checkbox
-                    />
+            {/* Detection Results */}
+            <div className='rounded-2xl bg-gray-800/50 p-4 shadow-xl backdrop-blur-lg'>
+              <h3 className='mb-3 text-base font-semibold text-white'>
+                Detection Results
+              </h3>
+              <div className='space-y-2 pr-2'>
+                {filteredLegends.length > 0 ? (
+                  filteredLegends.map((legend, index) => {
+                    const colors = getColorsByPercentage(legend.percentage)
+                    return (
+                      <div
+                        key={index}
+                        className={`text-2xs group rounded-lg p-2 transition-all ${colors.bg} ${colors.hover}`}
+                      >
+                        <div className='flex items-center space-x-2'>
+                          <div
+                            className={`h-3 w-3 rounded-full ${colors.dot}`}
+                          ></div>
+                          <span className='flex-1 text-sm font-medium text-gray-200'>
+                            {legend.name}
+                          </span>
+                          <span
+                            className={`text-sm font-semibold ${colors.text}`}
+                          >
+                            {legend.percentage}%
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <div className='text-center text-xs text-gray-400'>
+                    No detections above the accuracy threshold
                   </div>
-                  <div className='mt-1 h-px w-full bg-gray-300' />
-                </div>
-              ))}
+                )}
+              </div>
             </div>
 
-            {/* Switches Section Below Legends */}
-            <div className='mt-6 flex space-x-4'>
-              {' '}
-              {/* Changed space-y-3 to space-x-4 for horizontal spacing */}
-              {/* First Switch */}
-              <div className='flex h-24 w-32 flex-col items-center rounded-lg bg-white p-1 shadow-lg'>
-                {' '}
-                {/* Set fixed height and width */}
-                <div className='flex items-center space-x-2'>
-                  <span className='text-sm text-gray-700'>OFF</span>
-                  <Switch
-                    checked={enabledOne}
-                    onChange={setEnabledOne}
-                    className='group relative flex h-7 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[checked]:bg-white/10'
-                  >
-                    <span
-                      aria-hidden='true'
-                      className='pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-7'
-                    />
-                  </Switch>
-                </div>
-                <span className='mt-10 text-xl font-semibold text-gray-700'>
-                  {' '}
-                  {/* Adjusted margin-top for better spacing */}
+            {/* Toggle Controls */}
+            <div className='flex gap-3'>
+              <div className='flex-1 rounded-2xl bg-gray-800/50 p-3 shadow-xl backdrop-blur-lg transition-all hover:shadow-2xl'>
+                <Switch
+                  checked={enabledOne}
+                  onChange={setEnabledOne}
+                  className={`${
+                    enabledOne ? 'bg-pink-500' : 'bg-gray-600/50'
+                  } relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none`}
+                >
+                  <span
+                    className={`${
+                      enabledOne ? 'translate-x-5' : 'translate-x-1'
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                  />
+                </Switch>
+                <p className='mt-1.5 text-sm font-medium text-gray-300'>
                   Pathology
-                </span>
+                </p>
               </div>
-              {/* Second Switch */}
-              <div className='w-34 flex h-24 flex-col items-center rounded-lg bg-pink-700 p-1 shadow-lg'>
-                {' '}
-                {/* Set fixed height and width */}
-                <div className='flex items-center space-x-2'>
-                  <span className='text-sm text-gray-700'>ON</span>
-                  <Switch
-                    checked={enabledTwo}
-                    onChange={setEnabledTwo}
-                    className='group relative flex h-7 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[checked]:bg-white/10'
-                  >
-                    <span
-                      aria-hidden='true'
-                      className='pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-7'
-                    />
-                  </Switch>
-                </div>
-                <span className='mt-10 text-xl font-semibold text-white'>
-                  {' '}
-                  {/* Adjusted margin-top for better spacing */}
+
+              <div className='flex-1 rounded-2xl bg-gradient-to-br from-pink-500/80 to-pink-600/80 p-3 shadow-xl backdrop-blur-lg transition-all hover:shadow-2xl'>
+                <Switch
+                  checked={enabledTwo}
+                  onChange={setEnabledTwo}
+                  className={`${
+                    enabledTwo ? 'bg-white' : 'bg-gray-600/50'
+                  } relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none`}
+                >
+                  <span
+                    className={`${
+                      enabledTwo ? 'translate-x-5' : 'translate-x-1'
+                    } inline-block h-4 w-4 transform rounded-full bg-pink-500 transition-transform`}
+                  />
+                </Switch>
+                <p className='mt-1.5 text-sm font-medium text-white'>
                   Measurements
-                </span>
+                </p>
               </div>
             </div>
-            <div className='mr-2 mt-6 flex items-center gap-4'>
-              <button className='ml-2 rounded-lg bg-blue-950 px-4 py-2 text-white hover:bg-blue-700'>
-                Mail
+
+            {/* Action Buttons */}
+            <div className='flex gap-3'>
+              <button
+                onClick={() => {
+                  handleReportEmail(id)
+                }}
+                className='flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-600/80 to-pink-700/80 px-3 py-2.5 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all hover:translate-y-[-1px] hover:shadow-xl active:translate-y-0'
+              >
+                {sendingEmail ? (
+                  <Loading02Icon className='h-5 w-5 animate-spin' fill='#fff' />
+                ) : (
+                  <div className='flex items-center space-x-1.5'>
+                    <EnvelopeIcon className='h-5 w-5' />
+                    <span>Email</span>
+                  </div>
+                )}
               </button>
-              <button className='ml-2 rounded-lg bg-blue-950 px-4 py-2 text-white hover:bg-blue-700'>
-                Print
+              <button
+                onClick={handlePrint}
+                className='flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-600/80 to-pink-700/80 px-3 py-2.5 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all hover:translate-y-[-1px] hover:shadow-xl active:translate-y-0'
+              >
+                <PrinterIcon className='h-5 w-5' />
+                <span>Print</span>
               </button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Close Button */}
     </div>
   )
 }

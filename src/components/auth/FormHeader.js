@@ -1,12 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button } from '@/components/shared/Button'
-import { ChevronRightIcon } from '@heroicons/react/16/solid'
 import logo from '@/images/logo.jpeg'
 // import logo from '@/images/logo-icon.png'
-import GoogleIcon from '@/icons/nucleo/google.svg'
-// import GithubIcon from '@/icons/nucleo/github.svg'
-import FacebookIcon from '@/icons/nucleo/facebook.svg'
+import GoogleButton from './GoogleButton'
+
 export function FormHeader({ title, description, socialButtons = true }) {
   return (
     <div className='flex flex-col items-center px-6 pt-10 sm:px-10'>
@@ -25,33 +22,8 @@ export function FormHeader({ title, description, socialButtons = true }) {
       </p>
 
       {socialButtons && (
-        <div className='mt-8 flex w-full flex-col items-center gap-4 sm:flex-row'>
-          <Button
-            href='/'
-            variant='secondary'
-            size='md'
-            className='w-full max-w-60 bg-zinc-700/25 leading-6 sm:w-1/2 sm:max-w-none'
-            innerClassName='justify-between'
-          >
-            <div className='flex items-center'>
-              <GoogleIcon className='mr-2 h-4 w-4' />
-              Google
-            </div>
-            <ChevronRightIcon className='h-4 w-4 text-violet-100/75 duration-200 ease-in-out group-hover:text-violet-50/75' />
-          </Button>
-          <Button
-            href='/'
-            variant='secondary'
-            size='md'
-            className='w-full max-w-60 bg-zinc-700/25 leading-6 sm:w-1/2 sm:max-w-none'
-            innerClassName='justify-between'
-          >
-            <div className='flex items-center space-x-2'>
-              <FacebookIcon className='mr-2 h-4 w-4' />
-              FaceBook
-            </div>
-            <ChevronRightIcon className='h-4 w-4 text-violet-100/75 duration-200 ease-in-out group-hover:text-violet-50/75' />
-          </Button>
+        <div className='mt-8 flex w-full justify-center px-4 sm:px-6'>
+          <GoogleButton />
         </div>
       )}
     </div>

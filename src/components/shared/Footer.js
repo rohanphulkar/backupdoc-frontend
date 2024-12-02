@@ -158,8 +158,8 @@ export function Footer({ cta = true }) {
                   <div className='w-50 mb-2'>
                     <p className='text-white'>
                       Contact Support@epikdoc.com <br />
-                      Epikdoc AI Technologies PVT LTD <br />
-                      AF 16 Aditya Gold Center <br />
+                      Epikdoc AI Technologies Pvt. Ltd. <br />
+                      AF 15, 16 Aditya Gold Center <br />
                       Indirapuram, Ghaziabad <br />
                       India 201012
                     </p>
