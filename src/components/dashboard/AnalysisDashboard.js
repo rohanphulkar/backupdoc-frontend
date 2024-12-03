@@ -188,8 +188,10 @@ const AnalysisDashboard = ({ id }) => {
           },
         }
       )
-      if (status === 200) {
-        toast.success('Report has been sent to your email.')
+      if (status == 200) {
+        toast.success(
+          'Report generation started. You will receive an email when ready.'
+        )
       } else {
         toast.error('Something went wrong!')
       }
