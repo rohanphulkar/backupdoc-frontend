@@ -11,7 +11,7 @@ import { PlayCircleIcon } from '@heroicons/react/20/solid'
 import { CLIENTS } from '@/config'
 import data from '@/images/data.jpeg'
 import data2 from '@/images/data2.jpeg'
-import hero from '@/images/hero-image.png'
+import hero from '@/images/hero-optimized.png'
 export const HomeHero = () => {
   let [isOpen, setIsOpen] = useState(false)
   const sliderRef = useRef(null)
