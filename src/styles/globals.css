@@ -79,3 +79,34 @@ code .line:not(:last-child)::before {
     @apply !from-[#575EFF]/10 !to-[#E478FF]/10;
   }
 }
+
+/* Custom scrollbar styling for specific blocks */
+.bud-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #be185d transparent; /* Tailwind CSS pink-800 */
+  padding-right: 0.2rem; /* Use padding to create space on the left */
+}
+
+.bud-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.bud-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Made the track transparent */
+  border-radius: 10px;
+}
+
+.bud-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #be185d; /* Tailwind CSS pink-800 */
+  border-radius: 10px;
+  border: 2px solid transparent; /* Adjusted border to match transparent track */
+}
+
+.bud-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9d174d; /* Tailwind CSS pink-900 */
+}
+
+.bud-scrollbar::-webkit-scrollbar-corner {
+  background: transparent; /* Made the corner transparent */
+}

@@ -35,7 +35,7 @@ export default function Signin() {
       if (status === 200) {
         toast.success(result.message)
         dispatch(signin({ token: result.access_token }))
-        router.push('/')
+        router.push('/dashboard')
       } else {
         toast.error(result.error)
       }

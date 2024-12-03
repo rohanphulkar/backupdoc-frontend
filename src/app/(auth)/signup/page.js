@@ -13,6 +13,8 @@ import { api } from '@/api/api'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Loading02Icon } from 'hugeicons-react'
+import { useDispatch } from 'react-redux'
+import { signin } from '@/redux/AuthSlice'
 
 export default function Signup() {
   const [name, setName] = useState('')
@@ -21,6 +23,7 @@ export default function Signup() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -41,7 +44,8 @@ export default function Signup() {
         setPassword('')
         setName('')
         setPhone('')
-        router.push('/signin')
+        dispatch(signin({ token: result.access_token }))
+        router.push('/dashboard')
       } else {
         toast.error(result.error)
       }

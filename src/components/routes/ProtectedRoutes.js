@@ -13,7 +13,7 @@ const ProtectedRoutes = () => {
 
   useEffect(() => {
     const isTokenValid = token && token !== "" && token !== undefined && token !== null
-    
+
     const isPrivateRoute = privateRoutes.some(route => {
       const baseRoute = route.replace('/*', '')
       return pathname.startsWith(baseRoute)
@@ -27,8 +27,8 @@ const ProtectedRoutes = () => {
     if (isTokenValid) {
       // User is logged in
       if (isAuthRoute) {
-        // Prevent authenticated users from accessing auth routes
-        router.replace('/')
+        // Redirect authenticated users to dashboard instead of home
+        router.replace('/dashboard')
       }
     } else {
       // User is not logged in
