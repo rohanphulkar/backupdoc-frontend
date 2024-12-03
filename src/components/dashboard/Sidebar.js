@@ -144,6 +144,7 @@ export default function Sidebar({ children }) {
         setPatients((prevPatients) =>
           prevPatients.filter((patient) => patient.id !== patientId)
         )
+        router.push('/dashboard')
       } else {
         toast.error('Error deleting patient')
       }

@@ -11,7 +11,7 @@ import { PlayCircleIcon } from '@heroicons/react/20/solid'
 import { CLIENTS } from '@/config'
 import data from '@/images/data.jpeg'
 import data2 from '@/images/data2.jpeg'
-import hero from '@/images/hero.png'
+import hero from '@/images/hero-image.png'
 export const HomeHero = () => {
   let [isOpen, setIsOpen] = useState(false)
   const sliderRef = useRef(null)
@@ -151,8 +151,12 @@ export const HomeHero = () => {
       {/* Slide Comparasion */}
       <div className='container mx-auto flex flex-col items-center justify-center space-y-6 px-4 py-10 lg:flex-row lg:space-x-6 lg:space-y-0'>
         {/* Left side static image */}
-        <div className='relative h-96 w-full max-w-2xl overflow-hidden rounded-lg border border-gray-300 shadow-lg lg:w-1/2'>
-          <Image src={hero} alt='hero' className='h-full w-full object-cover' />
+        <div className='relative h-96 w-full max-w-2xl overflow-hidden rounded-lg shadow-lg lg:w-3/4'>
+          <Image
+            src={hero}
+            alt='hero'
+            className='h-full w-full object-contain'
+          />
         </div>
 
         {/* Right side comparison slider */}

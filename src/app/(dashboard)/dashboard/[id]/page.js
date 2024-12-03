@@ -259,7 +259,6 @@ const PatientPage = () => {
       setIsAnalyzing(true)
       const { data: result, status } = await api.get(
         `/predict/create-prediction/${selectedImage}`,
-
         {
           headers: { Authorization: `Bearer ${user}` },
         }
@@ -288,6 +287,31 @@ const PatientPage = () => {
 
       <div className='mx-auto flex w-full max-w-7xl flex-1 p-2'>
         <div className='flex h-full w-full flex-col rounded-lg border border-gray-800 bg-gray-900/90 p-4 shadow-sm backdrop-blur-xl sm:p-6'>
+          {doctor && doctor.credits <= 0 && (
+            <div className='mb-4 rounded-lg border border-yellow-600/20 bg-yellow-500/10 p-4'>
+              <div className='flex items-start'>
+                <div className='flex-shrink-0'>
+                  <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className='ml-3'>
+                  <h3 className='text-sm font-medium text-yellow-500'>No Credits Available</h3>
+                  <div className='mt-2 text-sm text-yellow-400'>
+                    <p>
+                      You've used all your available credits. Please upgrade to our Pro plan to continue analyzing X-rays.
+                    </p>
+                  </div>
+                  <div className='mt-4'>
+                    <button className='inline-flex items-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-yellow-400'>
+                      Upgrade to Pro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className='flex-1 overflow-y-auto'>
             <div className='xs:auto-rows-[theme(spacing.40)] xs:grid-cols-2 grid auto-rows-[theme(spacing.36)] grid-cols-1 gap-3 p-1 sm:auto-rows-[theme(spacing.44)] sm:grid-cols-3 md:auto-rows-[theme(spacing.48)] lg:grid-cols-4 xl:grid-cols-5'>
               {xrays?.map((image) => (
@@ -338,9 +362,11 @@ const PatientPage = () => {
           <div className='mt-4 flex justify-end'>
             <button
               onClick={handleAnalyze}
-              disabled={selectedImage === null}
+              disabled={
+                selectedImage === null || (doctor && doctor.credits <= 0)
+              }
               className={`rounded-lg px-6 py-2 text-sm font-medium transition-all sm:px-8 sm:py-3 sm:text-base ${
-                selectedImage !== null
+                selectedImage !== null && doctor && doctor.credits > 0
                   ? 'bg-pink-600/90 text-gray-100 shadow-md backdrop-blur-sm hover:bg-pink-700/90 hover:shadow-lg'
                   : 'cursor-not-allowed bg-gray-800/50 text-gray-500'
               }`}
