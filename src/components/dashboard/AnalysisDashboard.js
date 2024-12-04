@@ -12,8 +12,10 @@ import {
 import { Loading02Icon, MultiplicationSignIcon } from 'hugeicons-react'
 import { format } from 'date-fns'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 function PatientHeader({ patient, doctor }) {
+  const router = useRouter()
   return (
     <div className='mx-auto w-full max-w-7xl p-2'>
       <div className='rounded-lg border border-gray-800 bg-gray-800/90 p-3 shadow-sm backdrop-blur-xl sm:p-4'>
@@ -36,7 +38,10 @@ function PatientHeader({ patient, doctor }) {
                 {doctor?.credits ?? 0}
               </p>
             </div>
-            <button className='rounded-lg bg-gradient-to-r from-pink-600/90 to-purple-600/90 px-3 py-1.5 text-xs font-medium text-gray-100 shadow-lg backdrop-blur-sm transition-all hover:from-pink-700/90 hover:to-purple-700/90 hover:shadow-xl active:scale-95 sm:px-4 sm:py-2 sm:text-sm'>
+            <button
+              onClick={() => router.push('/pricing')}
+              className='rounded-lg bg-gradient-to-r from-pink-600/90 to-purple-600/90 px-3 py-1.5 text-xs font-medium text-gray-100 shadow-lg backdrop-blur-sm transition-all hover:from-pink-700/90 hover:to-purple-700/90 hover:shadow-xl active:scale-95 sm:px-4 sm:py-2 sm:text-sm'
+            >
               Upgrade Pro
             </button>
           </div>
