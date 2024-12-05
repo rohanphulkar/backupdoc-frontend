@@ -13,24 +13,23 @@ const faqs = [
   {
     question: 'What payment methods does BackupDoc accept?',
     answer:
-      'BackupDoc accepts a variety of payment methods, including major credit and debit cards (Visa, MasterCard, American Express),PayPal, and bank transfers.',
+      'BackupDoc accepts a variety of payment methods, including major credit and debit cards (Visa, MasterCard, American Express), PayPal, and bank transfers.',
   },
   {
     question: 'Can I change my plan later on?',
     answer:
-      'Yes, you can change your plan at any time. Simply go to your account settings and select the "Change Plan" option. You can upgrade or downgrade your plan as needed. Any changes will be prorated based on your billing cycle',
+      'Yes, you can change your plan at any time. Simply go to your account settings and select the "Change Plan" option. You can upgrade or downgrade your plan as needed. Any changes will be prorated based on your billing cycle.',
   },
   {
     question: 'Is there a free trial available?',
     answer:
-      'No, But we Have seasonal Discounts via sales executives, contact support to know who your area representative today.',
+      'No, but we have seasonal discounts via sales executives. Contact support to know who your area representative is today.',
   },
   {
     question: 'Can I get a refund if I don’t find BackupDoc useful?',
     answer:
-      'Yes, we offer a 30-day money-back guarantee. If you’re not satisfied with BackupDoc, request are fund within 30 days of your purchase. Contact our support team to initiate the refund process..',
+      'Yes, we offer a 30-day money-back guarantee. If you’re not satisfied with BackupDoc, request a refund within 30 days of your purchase. Contact our support team to initiate the refund process.',
   },
-
   {
     question: 'How does BackupDoc ensure data privacy and security?',
     answer:

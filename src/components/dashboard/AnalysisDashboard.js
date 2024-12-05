@@ -65,6 +65,10 @@ const AnalysisDashboard = ({ id }) => {
   const [patient, setPatient] = useState(null)
   const [doctor, setDoctor] = useState(null)
   const [previousAnalyses, setPreviousAnalyses] = useState([])
+  const [rotated, setRotated] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
 
   const getColorsByPercentage = (percentage) => {
     if (percentage >= 0 && percentage < 1) {
@@ -171,6 +175,10 @@ const AnalysisDashboard = ({ id }) => {
       const predictedImage = printContent.querySelector('.predicted-image')
       const patientDetails = printContent.querySelector('.patient-details')
       patientDetails.style.display = 'block'
+      document.body.style = `
+      background-color: #0f172a;
+      color: white
+      `
       document.body.innerHTML =
         predictedImage.outerHTML + patientDetails.outerHTML
 
@@ -252,6 +260,30 @@ const AnalysisDashboard = ({ id }) => {
     setLegends(legends.filter((legend) => legend.id !== id))
   }
 
+  const rotateClockwise = () => {
+    setRotated((prev) => (prev + 90) % 360)
+  }
+  const rotateAntiClockwise = () => {
+    setRotated((prev) => (prev - 90 + 360) % 360)
+  }
+
+  const handleMouseDown = (e) => {
+    if (imageScale > 1) {
+      setIsDragging(true)
+      setDragStart({ x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y })
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      setImagePosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
   return (
     <div className='relative min-h-screen bg-gradient-to-br from-gray-900/95 to-gray-800/95 p-4 backdrop-blur-xl md:p-6'>
       <PatientHeader patient={patient} doctor={doctor} />
@@ -322,6 +354,23 @@ const AnalysisDashboard = ({ id }) => {
                     +
                   </button>
                 </div>
+                <div className='mt-6 flex items-center justify-center gap-3'>
+                  <button
+                    onClick={rotateAntiClockwise}
+                    className='rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-md transition-colors duration-300 hover:bg-gray-100'
+                  >
+                    ↺
+                  </button>
+                  <span className='text-sm font-medium text-gray-300'>
+                    {rotated}°
+                  </span>
+                  <button
+                    onClick={rotateClockwise}
+                    className='rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-md transition-colors duration-300 hover:bg-gray-100'
+                  >
+                    ↻
+                  </button>
+                </div>
               </div>
 
               <div className='space-y-3'>
@@ -357,9 +406,13 @@ const AnalysisDashboard = ({ id }) => {
                 <div
                   className='relative rounded-2xl bg-gray-800/50 p-4 shadow-xl backdrop-blur-lg transition-all duration-300 hover:bg-gray-800/60'
                   ref={windowRef}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
                 >
                   <div
-                    className='patient-details space-y-2 rounded-lg bg-gray-800/70 p-4 text-left shadow-md'
+                    className='patient-details space-y-2 rounded-lg bg-slate-900 p-4 text-left shadow-md'
                     style={{
                       display: 'none',
                     }}
@@ -386,13 +439,13 @@ const AnalysisDashboard = ({ id }) => {
                       <img
                         src={prediction.original_image}
                         alt='Original Image'
-                        style={{ transform: `scale(${imageScale})` }}
+                        style={{ transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)` }}
                         className={`h-auto w-full rounded-lg object-contain shadow-lg transition-all duration-500 ease-in-out ${showAnalyzed ? 'opacity-0' : 'opacity-100'} absolute left-0 top-0`}
                       />
                       <img
                         src={prediction.predicted_image}
                         alt='Analyzed Image'
-                        style={{ transform: `scale(${imageScale})` }}
+                        style={{ transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)` }}
                         className={`predicted-image h-auto w-full rounded-lg object-contain shadow-lg transition-all duration-500 ease-in-out ${showAnalyzed ? 'opacity-100' : 'opacity-0'}`}
                       />
                     </div>

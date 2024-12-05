@@ -72,7 +72,7 @@ export default function Signup() {
 
           <FormHeader
             title='Sign Up for your Backupdoc account'
-            description='Always free! No criedt card required.'
+            description='Always free! No credit card required.'
           />
 
           <div className='mt-8 flex w-full items-center px-10'>

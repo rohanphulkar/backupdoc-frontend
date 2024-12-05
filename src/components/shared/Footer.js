@@ -82,8 +82,6 @@ export function Footer({ cta = true }) {
   return (
     <section className={clsx({ 'overflow-hidden': cta })}>
       <div className='relative'>
-        {cta && <FooterCTA />}
-
         {/* Stars */}
         <div
           className='absolute -bottom-4 left-1/2 -z-10 h-48 w-full max-w-3xl -translate-x-1/2 md:-bottom-8 md:h-64 lg:-bottom-12'
@@ -107,7 +105,7 @@ export function Footer({ cta = true }) {
                       <a href='#' className='text-light'>
                         Home
                       </a>
-                      <div>
+                      {/* <div>
                         <div className='dropdown'>
                           <button
                             className='text-light font-medium'
@@ -134,7 +132,7 @@ export function Footer({ cta = true }) {
                             </li>
                           </ul>
                         </div>
-                      </div>
+                      </div> */}
                       <a href='/bud-apps/pricing' className='text-light'>
                         Pricing
                       </a>

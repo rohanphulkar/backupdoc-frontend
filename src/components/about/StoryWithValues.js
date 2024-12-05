@@ -64,7 +64,7 @@ export function StoryWithValues() {
           <div className='relative z-10 flex flex-col'>
             <ContentPill Icon={BuildingOffice2Icon} text='Who we are' />
             <h2 className='mt-5 text-4xl font-bold leading-extratight text-violet-100 lg:text-[2.75rem] xl:leading-extratight'>
-              Founders's vision
+              Founder's vision
             </h2>
 
             {/* Text content */}

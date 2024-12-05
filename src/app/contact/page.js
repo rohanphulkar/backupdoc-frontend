@@ -21,7 +21,7 @@ export default function Contact() {
         <ContactHero />
       </HeroContainer>
       <Divider />
-      <PopularLinks />
+      {/* <PopularLinks /> */}
       <Divider />
       <Faq />
       <Divider />

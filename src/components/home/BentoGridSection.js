@@ -120,7 +120,8 @@ export const BentoGridSection = () => {
                       <p className='mt-2 text-base text-zinc-300 sm:mt-3'>
                         BackupDoc’s AI highlights areas of concern on X-rays,
                         helping you identify overlooked details to provide
-                        thorough, trustworthy
+                        thorough, trustworthy diagnoses and improve patient
+                        outcomes.
                       </p>
 
                       {/* Features */}
@@ -168,11 +169,13 @@ export const BentoGridSection = () => {
 
                   {/* Globe */}
                   <div className='relative col-span-12 h-64 lg:col-span-5 lg:h-auto xl:col-span-1'>
-                    <div className='absolute -left-14 bottom-0 right-0 -z-10 sm:-top-20 sm:left-[unset] lg:-left-64 lg:top-[unset] xl:-bottom-12'>
+                    <div className='xl:-bottom- absolute -left-14 bottom-0 right-0 -z-10 sm:-top-20 sm:left-[unset] lg:-left-64 lg:top-[unset]'>
                       <Image
-                        src={globe}
+                        src={`/1.svg`}
                         alt=''
-                        className='h-full w-full object-contain'
+                        width={100}
+                        height={100}
+                        className='ml-auto w-[55%] object-contain mix-blend-overlay'
                       />
                     </div>
                   </div>
@@ -199,10 +202,10 @@ export const BentoGridSection = () => {
                       <p className='text-sm font-bold text-violet-400'>
                         <span className='relative inline-block text-nowrap'>
                           <span className='relative z-10 bg-gradient-to-b from-violet-400 via-violet-400 to-violet-500 bg-clip-text leading-none text-transparent'>
-                            Color-coded overlays
+                            Color-coded x-rays
                           </span>
                           <span className='absolute left-0 top-[-0.5px] -z-10 text-violet-300'>
-                            Color-coded overlays
+                            Color-coded x-rays
                           </span>
                         </span>
                       </p>
@@ -240,9 +243,9 @@ export const BentoGridSection = () => {
                       {' '}
                       {/* First image container */}
                       <Image
-                        src={Binarytooth} // Replace with your first image source
+                        src={`/4.svg`} // Replace with your first image source
                         alt='First Image'
-                        className='object-contain'
+                        className='object-contain mix-blend-multiply'
                         layout='fill' // Use fill layout to cover the parent div
                         quality={100}
                       />
@@ -251,9 +254,9 @@ export const BentoGridSection = () => {
                       {' '}
                       {/* Second image container */}
                       <Image
-                        src={Binarytooth} // Replace with your second image source
+                        src={`/5.svg`} // Replace with your second image source
                         alt='Second Image'
-                        className='object-contain'
+                        className='object-contain mix-blend-multiply'
                         layout='fill' // Use fill layout to cover the parent div
                         quality={100}
                       />
@@ -268,8 +271,10 @@ export const BentoGridSection = () => {
               <div className='relative z-30 w-full overflow-hidden rounded-xl bg-white/[0.01] shadow-inner-blur-no-border backdrop-blur-lg backdrop-brightness-50'>
                 <div className='absolute inset-0 top-0 -z-10'>
                   <Image
-                    src={porch}
+                    src={`/showcase.svg`}
                     alt=''
+                    width={100}
+                    height={100}
                     className='h-auto w-full'
                     sizes='(max-width: 420px) 100vw'
                   />
@@ -298,12 +303,11 @@ export const BentoGridSection = () => {
                         Bone Measurements and Structural Support Analysis
                       </h3>
                       <p className='mt-2 text-base text-zinc-300 sm:mt-3'>
-                        is Simplify complex diagnoses, giving patients a clear
-                        view of their dental health. BackupDoc’s AI highlights
-                        areas of concern on X-rays, helping you identify
-                        overlooked details to provide thorough, trustworthy
-                        care. Detailed bone support indicators help patients
-                        comprehend treatment needs, fostering long-term
+                        BackupDoc’s AI highlights areas of concern on X-rays,
+                        helping you identify overlooked details to provide
+                        thorough, trustworthy care.
+                        <br /> <br /> Detailed bone support indicators help
+                        patients comprehend treatment needs, fostering long-term
                         engagement
                       </p>
 

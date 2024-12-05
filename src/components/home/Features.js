@@ -17,7 +17,7 @@ import spaceSpotlight from '@/images/space-spotlight.png'
 const features = [
   {
     icon: UsersIcon,
-    title: 'Boost Your Revenue, Increase Patien Follow-Ups.',
+    title: 'Boost Your Revenue, Increase Patient Follow-Ups.',
     description:
       'Discover how BackupDoc can help convert consultations into long-term patient relationships.',
   },
@@ -26,19 +26,19 @@ const features = [
     icon: CursorArrowRippleIcon,
     title: 'See the Impact on Your Bottom Line!',
     description:
-      'Experience higher patient trust and appointment conversions with AI- driven diagnostics.',
+      'Experience higher patient trust and appointment conversions with AI-driven diagnostics.',
   },
   {
     icon: PresentationChartLineIcon,
     title: 'Increase Appointments and Strengthen Patient Relationships',
     description:
-      'BackupDoc’s AI-backed insights help patients understand their care,leading to more follow-ups and greater loyalty.',
+      'BackupDoc’s AI-backed insights help patients understand their care, leading to more follow-ups and greater loyalty.',
   },
 
   {
     icon: ShieldCheckIcon,
     title:
-      'Experience higher patient trust and appointmentconversions with AI-driven diagnostics.',
+      'Experience higher patient trust and appointment conversions with AI-driven diagnostics.',
     description:
       'With BackupDoc’s visual tools, enhance patient understanding, trust, and commitment to treatment plans.',
   },
@@ -51,7 +51,7 @@ export function Features() {
         {/* Text content */}
         <div className='relative flex flex-col items-center'>
           <h1 className='max-w-5xl text-center text-4xl font-bold leading-extratight text-violet-100 sm:text-5xl sm:leading-extratight'>
-            Increase revenue and appointment conversions through BackupDoc’s,
+            Increase revenue and appointment conversions through BackupDoc AI's help,
             <span className='relative inline-block text-nowrap'>
               <span className='relative z-10 bg-gradient-to-b from-violet-400 via-violet-400 to-violet-500 bg-clip-text text-transparent'>
                 Effortlessly
