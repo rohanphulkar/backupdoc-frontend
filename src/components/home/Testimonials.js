@@ -75,7 +75,7 @@ const testimonials = [
       name: 'Jackson Patel',
       title: 'Co-founder of Infinituma',
       quote:
-        'This solution has been a game-changer for our project timelines and delivery. Couldn't be more satisfied.',
+        'This solution has been a game-changer for our project timelines and delivery. Couldn’t be more satisfied.',
     },
   ],
 
@@ -125,10 +125,10 @@ export function Testimonials() {
               <span className='absolute -top-px left-0 -z-10 text-violet-300'>
                 Successfully
               </span>
-            </span>
-            {' '}provided second opinions to 2000+ clients
+            </span>{' '}
+            provided second opinions to 2000+ clients
           </h1>
-          <p className='mt-5 max-w-xl text-center text-base sm:text-lg leading-7 sm:leading-8 text-zinc-200 px-4 sm:px-0'>
+          <p className='mt-5 max-w-xl px-4 text-center text-base leading-7 text-zinc-200 sm:px-0 sm:text-lg sm:leading-8'>
             Don't leave your dental health to chance. BackupDoc.ai uses advanced
             AI technology to review your X-rays and provide a second opinion.
             Ensure you get the best care possible without any doubts.
@@ -166,32 +166,32 @@ export function Testimonials() {
             {[...Array(2)].map((_, i) => (
               <div
                 key={`testimonials-${rowIndex}-${i}`}
-                className='flex w-full sm:w-1/2 justify-around'
+                className='flex w-full justify-around sm:w-1/2'
               >
                 {row.map((testimonial, j) => (
                   <div
                     key={`testimonial-${rowIndex}-${i}-${j}`}
-                    className='mx-2 sm:mx-3.5 w-72 sm:w-96 rounded-2xl bg-zinc-950/[.01] shadow-inner-blur'
+                    className='mx-2 w-72 rounded-2xl bg-zinc-950/[.01] shadow-inner-blur sm:mx-3.5 sm:w-96'
                   >
                     <div className='flex h-full w-full flex-col rounded-2xl border border-violet-200/[.06] p-4 sm:p-6'>
                       <div className='flex items-center'>
-                        <div className='flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[linear-gradient(to_top_right,rgba(113,113,122,0.3),rgba(24,24,27,1)),linear-gradient(rgba(9,9,11,0.5),rgba(9,9,11,0.5))]'>
+                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(to_top_right,rgba(113,113,122,0.3),rgba(24,24,27,1)),linear-gradient(rgba(9,9,11,0.5),rgba(9,9,11,0.5))] sm:h-11 sm:w-11'>
                           <Image
-                            className='h-[38px] w-[38px] sm:h-[42px] sm:w-[42px] rounded-full object-cover'
+                            className='h-[38px] w-[38px] rounded-full object-cover sm:h-[42px] sm:w-[42px]'
                             src={testimonial.avatar}
                             alt={testimonial.name}
                           />
                         </div>
                         <div className='ml-2.5 flex flex-col justify-center'>
-                          <span className='text-xs sm:text-sm font-semibold text-white line-clamp-1'>
+                          <span className='line-clamp-1 text-xs font-semibold text-white sm:text-sm'>
                             {testimonial.name}
                           </span>
-                          <span className='text-xs sm:text-sm font-medium text-zinc-400 line-clamp-1'>
+                          <span className='line-clamp-1 text-xs font-medium text-zinc-400 sm:text-sm'>
                             {testimonial.title}
                           </span>
                         </div>
                       </div>
-                      <p className='mt-4 text-base sm:text-lg text-zinc-100 line-clamp-4 sm:line-clamp-none'>
+                      <p className='mt-4 line-clamp-4 text-base text-zinc-100 sm:line-clamp-none sm:text-lg'>
                         &ldquo;{testimonial.quote}&rdquo;
                       </p>
                     </div>
