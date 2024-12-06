@@ -68,31 +68,31 @@ export const Stats = () => {
   return (
     <dl
       ref={statsSectionRef}
-      className='mt-16 grid gap-14 sm:mt-20 sm:grid-cols-3 sm:gap-3 lg:mt-24 xl:mt-28'
+      className='mt-8 grid grid-cols-1 gap-6 px-4 sm:mt-16 sm:grid-cols-3 sm:gap-8 lg:mt-20 xl:mt-24'
     >
-      <div className='flex flex-col items-center justify-center'>
-        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80'>
+      <div className='flex flex-col items-center justify-center p-4'>
+        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80 break-words max-w-[200px]'>
           Second Opinions Completed
         </dt>
-        <dd className='odometer mt-4 !font-mono text-3xl font-bold text-white'>
+        <dd className='odometer mt-3 !font-mono text-2xl sm:text-3xl font-bold text-white'>
           <Odometer value={stats.activeUsers} />
         </dd>
       </div>
 
-      <div className='flex flex-col items-center justify-center'>
-        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80'>
-          Companies managed
+      <div className='flex flex-col items-center justify-center p-4'>
+        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80 break-words max-w-[200px]'>
+          Companies Managed
         </dt>
-        <dd className='odometer mt-4 text-center !font-mono text-3xl font-bold text-white'>
+        <dd className='odometer mt-3 text-center !font-mono text-2xl sm:text-3xl font-bold text-white'>
           <Odometer value={stats.companiesManaged} />
         </dd>
       </div>
 
-      <div className='flex flex-col items-center justify-center'>
-        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80'>
-          Projects created
+      <div className='flex flex-col items-center justify-center p-4'>
+        <dt className='text-center text-xs font-extrabold uppercase tracking-widest text-violet-50/80 break-words max-w-[200px]'>
+          Projects Created
         </dt>
-        <dd className='odometer mt-4 text-center !font-mono text-3xl font-bold text-white'>
+        <dd className='odometer mt-3 text-center !font-mono text-2xl sm:text-3xl font-bold text-white'>
           <Odometer value={stats.projectsCreated} />
         </dd>
       </div>

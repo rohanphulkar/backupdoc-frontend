@@ -7,9 +7,6 @@ import { cn } from '@/lib/utils'
 import spaceSpotlight from '@/images/space-spotlight.png'
 import cosmicButterfly from '@/images/cosmic-butterfly.png'
 
-import SlackIcon from '@/icons/nucleo/slack.svg'
-import GithubIcon from '@/icons/nucleo/github.svg'
-import TwitterIcon from '@/icons/nucleo/twitter.svg'
 import YoutubeIcon from '@/icons/nucleo/youtube-48.svg'
 import LinkedinIcon from '@/icons/nucleo/linkedin.svg'
 import LinkIcon from '@/icons/nucleo/link-16.svg'
@@ -17,57 +14,24 @@ import ArrowTopRightIcon from '@/icons/nucleo/arrow-top-right-16.svg'
 
 const links = [
   {
-    title: 'Join the community',
+    title: 'Watch AI in Action',
     description:
-      'More than 10,000 Nebula users share questions and best practices in our Slack community',
-    descriptionMobile: 'Join a community of over 10,000 users.',
-    url: 'https://slack.com',
-    icon: SlackIcon,
-    label: 'Join Slack',
-    borderClassName:
-      'after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r after:from-violet-200/[0.025] sm:after:from-transparent after:to-violet-200/[0.075] sm:after:to-violet-200/[0.125]',
-  },
-  {
-    title: 'Build with Nebula',
-    description:
-      'Join our developer ecosystem on GitHub. Contribute to Nebula and help us shape the future of collaboration.',
-    descriptionMobile: 'Join our developer ecosystem on GitHub.',
-    url: 'https://github.com',
-    icon: GithubIcon,
-    label: 'Join on GitHub',
-    borderClassName:
-      'after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r after:from-violet-200/[0.075] after:to-violet-200/[0.15] sm:after:via-violet-200/[0.25] sm:after:to-violet-200/[0.125] sm:before:content-[""] sm:before:absolute sm:before:left-0 sm:before:h-full sm:before:w-px sm:before:bg-gradient-to-b sm:before:from-violet-200/[.01] sm:before:to-violet-200/[0.125]',
-  },
-  {
-    title: 'Stay in the loop',
-    description:
-      'Stay updated with the latest news, updates, and insights by following us on X, formerly known as Twitter.',
-    descriptionMobile: 'Stay updated with the latest news on Twitter.',
-    url: 'https://twitter.com',
-    icon: TwitterIcon,
-    label: 'Follow us',
-    borderClassName:
-      'after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r  after:from-violet-200/[0.15] after:to-violet-200/[0.075] sm:after:from-violet-200/[0.125] sm:after:to-transparent before:sm:block before:hidden before:content-[""] before:absolute before:left-0 before:h-full before:w-px before:bg-gradient-to-b before:from-violet-200/[.015] before:to-violet-200/[0.125]',
-  },
-  {
-    title: 'Explore video library',
-    description:
-      'From detailed tutorials to user stories, discover how to get the most out of Nebula.',
-    descriptionMobile: 'Explore our video library on YouTube.',
-    url: 'https://youtube.com',
+      'See how BackupDoc AI analyzes dental X-rays in real-time. Watch case studies, tutorials and success stories from dental professionals.',
+    descriptionMobile: 'Watch AI dental X-ray analysis demos and tutorials.',
+    url: 'https://www.youtube.com/@BackupDoc-AI',
     icon: YoutubeIcon,
-    label: 'Watch now',
+    label: 'Watch demos',
     borderClassName:
       'sm:after:block after:content-[""] sm:after:w-1.5 sm:after:h-1.5 sm:after:bg-violet-200 sm:after:top-[-3.5px] sm:after:left-1/2 sm:after:translate-x-[-2.5px] sm:after:rounded-full after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r after:from-violet-200/[0.075] after:to-violet-200/[0.025]',
   },
   {
-    title: 'Join our network',
+    title: 'Connect with Dental Professionals',
     description:
-      'Join our LinkedIn network for professional insights, company news, and career opportunities.',
-    descriptionMobile: 'Join our network for professional insights.',
-    url: 'https://linkedin.com',
+      'Join our community of dentists and radiologists. Stay updated on AI advances in dental diagnostics and connect with industry experts.',
+    descriptionMobile: 'Join our dental professional network.',
+    url: 'https://www.linkedin.com/company/backupdoc-ai/',
     icon: LinkedinIcon,
-    label: 'Connect on LinkedIn',
+    label: 'Join our network',
     borderClassName:
       'sm:before:content-[""] sm:before:absolute sm:before:left-0 sm:before:h-full sm:before:w-px sm:before:bg-gradient-to-b sm:before:from-violet-200/[.25] sm:before:to-violet-200/[0.01] after:content-[""] after:hidden sm:after:block after:absolute after:w-1.5 after:h-1.5 after:bg-violet-200 after:top-[-3.5px] after:left-1/2 after:translate-x-[-2.5px] after:rounded-full',
   },
@@ -99,16 +63,15 @@ export function PopularLinks() {
         <div className='flex flex-col items-center'>
           <ContentPill
             Icon={LinkIcon}
-            text='Support and resources'
+            text='Resources & Community'
             iconClassName='h-3.5 w-3.5'
           />
 
           <h1 className='mt-5 max-w-5xl text-center text-4xl font-bold leading-extratight text-violet-100 sm:mt-6 sm:text-5xl sm:leading-extratight'>
-            Explore our online hub
+            Learn More About AI-Powered Dental Diagnostics
           </h1>
           <p className='mt-5 max-w-2xl text-center text-[17px] leading-8 text-zinc-200 sm:text-lg sm:leading-8'>
-            Lorem ipsum dolor sit amet magna eleifend aliquam diam egestas sed
-            facilisi non cras. In bibendum eu eget porttitor ultricies.
+            Discover how BackupDoc AI is revolutionizing dental X-ray analysis. Join our community of dental professionals and explore resources to enhance your practice with AI technology.
           </p>
         </div>
 

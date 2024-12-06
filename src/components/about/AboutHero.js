@@ -9,32 +9,37 @@ import { cn, getOffsetTop } from '@/lib/utils'
 import { useEffect, useRef } from 'react'
 
 import cosmicButterfly from '@/images/cosmic-butterfly.png'
-import company01 from '@/images/company01.jpg'
-import company02 from '@/images/company02.jpg'
-import company03 from '@/images/company03.jpg'
+
 import company04 from '@/images/company04.jpg'
-import company05 from '@/images/company05.jpg'
 
 const companyImages = [
   {
-    image: company01,
+    image: '/about/1.png',
     alt: 'Group of coworkers in a meeting, discussing around a table',
+    width: 800,
+    height: 1422, // Assuming 9:16 aspect ratio
   },
   {
-    image: company02,
+    image: '/about/2.png',
     alt: 'Team collaborating over charts and documents in a meeting room',
+    width: 800,
+    height: 1422,
   },
   {
-    image: company03,
+    image: '/about/3.png',
     alt: 'Group of colleagues working together at a shared workspace',
+    width: 800,
+    height: 1422,
   },
   {
     image: company04,
     alt: 'Two people playing foosball in a modern office',
   },
   {
-    image: company05,
+    image: '/about/4.jpg',
     alt: 'Coworkers celebrating a birthday in the office with a sign',
+    width: 800,
+    height: 1422,
   },
 ]
 
@@ -223,7 +228,9 @@ export function AboutHero() {
             <Image
               src={companyImage.image}
               alt={companyImage.alt}
-              className='relative h-full w-full rounded-lg object-cover'
+              width={companyImage.width}
+              height={companyImage.height}
+              className='relative aspect-[9/16] h-full w-full rounded-lg object-cover'
               priority
             />
           </div>

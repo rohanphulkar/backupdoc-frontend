@@ -51,7 +51,7 @@ export function Team() {
               </span>
             </span>
             <br />
-            Fueling Backupdoc's&apos;s Mission
+            Fueling Backupdoc&apos;s Mission
           </h1>
         </div>
       </Container>

@@ -32,11 +32,11 @@ import newZealandFlag from '@/icons/nucleo/flags/new-zealand.svg'
 
 const careerBenefits = [
   {
-    title: 'Sigup For an account',
+    title: 'Sign up for an account',
     icon: globePin,
     description: [
       'Visit BackupDoc website and click on Sign Up',
-      'Fill in your personal detail and clinic information to create your account',
+      'Fill in your personal details and clinic information to create your account',
       'Verify your email and complete the registration process',
     ],
     borderClassName:
@@ -46,7 +46,7 @@ const careerBenefits = [
     title: 'Upload Your First Radiograph',
     icon: heartbeat,
     description: [
-      'Once logged in, navigate to Creaate Patient List and Upload Radiographsection.',
+      'Once logged in, navigate to Create Patient List and Upload Radiographs section.',
       'Click on the upload button or drag and drop your dental radiograph into the system.',
       'Ensure the image is clear and high-resolution for the most accurate analysis.',
     ],
@@ -57,8 +57,8 @@ const careerBenefits = [
     title: 'AI Analysis in Seconds',
     icon: bulb,
     description: [
-      'After uploading, BackupDoc’s AI will instantly analyze the radiograph.',
-      'Within seconds, you will receive a detailed diagnostic reporthighlighting potential issues such as caries, bone loss, or otherpathologies',
+      "After uploading, BackupDoc's AI will instantly analyze the radiograph.",
+      'Within seconds, you will receive a detailed diagnostic report highlighting potential issues such as caries, bone loss, or other pathologies',
     ],
     borderClassName:
       'after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r lg:after:from-violet-200/[0.25] lg:after:to-violet-200/[0.125] after:from-violet-200/[0.15] after:to-violet-200/[0.075] md:after:from-violet-200/[0.125] md:after:to-transparent before:md:block before:hidden before:content-[""] before:absolute before:left-0 before:h-full before:w-px before:bg-gradient-to-b before:from-violet-200/[.015] lg:before:to-violet-200/[0.25] before:to-violet-200/[0.125]',
@@ -67,8 +67,8 @@ const careerBenefits = [
     title: 'Review and Build Patient Trust',
     icon: palmTree,
     description: [
-      'After uploading, BackupDoc’s AI will instantly analyze the radiograph.',
-      'Within seconds, you will receive a detailed diagnostic reporthighlighting potential issues such as caries, bone loss, or otherpathologies',
+      "After uploading, BackupDoc's AI will instantly analyze the radiograph.",
+      'Within seconds, you will receive a detailed diagnostic report highlighting potential issues such as caries, bone loss, or other pathologies',
     ],
     borderClassName:
       'md:hidden before:hidden before:sm:block lg:block after:inset-x-0 after:bottom-0 after:h-px after:w-full after:bg-gradient-to-r after:from-violet-200/[0.075] after:to-violet-200/[0.025] lg:after:from-violet-200/[0.125] lg:after:to-transparent before:content-[""] before:absolute before:left-0 before:h-full before:w-px before:bg-gradient-to-b md:before:from-violet-200/[.01] md:before:to-violet-200/[0.125] before:from-violet-200/[0.075] before:to-violet-200/[0.025]',
@@ -76,7 +76,7 @@ const careerBenefits = [
   {
     title: 'Gear Allowance',
     icon: computerGear,
-    description: 'We’ll send you the latest technology wherever.',
+    description: "We'll send you the latest technology wherever.",
     borderClassName:
       'after:hidden md:after:block after:content-[""] after:absolute after:w-1.5 after:h-1.5 after:bg-violet-200 after:top-[-3.5px] after:left-1/2 after:translate-x-[-2.5px] after:rounded-full before:content-[""] before:absolute before:sm:hidden before:inset-x-0 before:bottom-0 before:h-px before:w-full before:bg-gradient-to-r before:from-violet-200/[0.025] before:to-violet-200/[0.075]',
   },

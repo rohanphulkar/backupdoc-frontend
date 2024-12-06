@@ -30,7 +30,7 @@ const testimonials = [
       name: 'Patient Education Gap',
       title: 'Co-founder of Infinituma',
       quote:
-        'Patients struggle to understand dental issues and struggle to trust traditional radiographs.',
+        'Patients struggle to understand dental issues and trust traditional radiographs.',
     },
     {
       avatar: avatar3,
@@ -44,7 +44,7 @@ const testimonials = [
       name: 'AI-Powered Diagnostics',
       title: 'Developer at Tinker',
       quote:
-        'BackupDoc.ai analyzes dental radiographs, highlighting areas needing attention..',
+        'BackupDoc.ai analyzes dental radiographs, highlighting areas needing attention.',
     },
   ],
 
@@ -54,14 +54,14 @@ const testimonials = [
       name: 'Visual Education Tool',
       title: 'UI Designer at Creatify',
       quote:
-        'Converts technical radiograph data into OBJECTIVE & easy-to-understand visuals for patients.',
+        'Converts technical radiograph data into objective & easy-to-understand visuals for patients.',
     },
     {
       avatar: avatar6,
       name: 'Seamless Integration',
       title: 'Creative Director at VisualVibe',
       quote:
-        'Enables dentists to identify and communicate potential issues more effectively, leading to better patient care and increased treatment acceptance!',
+        'Enables dentists to identify and communicate potential issues more effectively, leading to better patient care and increased treatment acceptance.',
     },
     {
       avatar: avatar7,
@@ -75,7 +75,7 @@ const testimonials = [
       name: 'Jackson Patel',
       title: 'Co-founder of Infinituma',
       quote:
-        'This solution has been a game-changer for our project timelines and delivery. Couldn’t be more satisfied.',
+        'This solution has been a game-changer for our project timelines and delivery. Couldn't be more satisfied.',
     },
   ],
 
@@ -116,19 +116,19 @@ export function Testimonials() {
     <section className='relative overflow-hidden py-20 sm:py-24'>
       <Container>
         {/* Text content */}
-        <div className='relative flex flex-col items-center'>
-          <h1 className='max-w-5xl text-center text-4xl font-bold leading-extratight text-violet-100 sm:text-5xl sm:leading-extratight'>
-            <span className='relative inline-block text-nowrap'>
+        <div className='relative flex flex-col items-center px-4 sm:px-0'>
+          <h1 className='max-w-5xl text-center text-3xl font-bold leading-tight text-violet-100 sm:text-4xl md:text-5xl md:leading-extratight'>
+            <span className='relative inline-block'>
               <span className='relative z-10 bg-gradient-to-b from-violet-400 via-violet-400 to-violet-500 bg-clip-text text-transparent'>
-                Sucessfully
+                Successfully
               </span>
               <span className='absolute -top-px left-0 -z-10 text-violet-300'>
-                Sucessfully
+                Successfully
               </span>
             </span>
-            &nbsp; provided second opinions to 2000+ clients
+            {' '}provided second opinions to 2000+ clients
           </h1>
-          <p className='mt-5 max-w-xl text-center text-lg leading-8 text-zinc-200'>
+          <p className='mt-5 max-w-xl text-center text-base sm:text-lg leading-7 sm:leading-8 text-zinc-200 px-4 sm:px-0'>
             Don't leave your dental health to chance. BackupDoc.ai uses advanced
             AI technology to review your X-rays and provide a second opinion.
             Ensure you get the best care possible without any doubts.
@@ -159,39 +159,39 @@ export function Testimonials() {
           <div
             key={`testimonial-row-${rowIndex}`}
             className={clsx(
-              'mx-3.5 flex w-max animate-infiniteScroll items-center justify-center',
-              rowIndex % 2 != 0 && '[animation-direction:reverse]'
+              'mx-3.5 flex w-max animate-infiniteScroll items-center justify-center overflow-hidden',
+              rowIndex % 2 !== 0 && '[animation-direction:reverse]'
             )}
           >
             {[...Array(2)].map((_, i) => (
               <div
                 key={`testimonials-${rowIndex}-${i}`}
-                className='flex w-1/2 justify-around'
+                className='flex w-full sm:w-1/2 justify-around'
               >
                 {row.map((testimonial, j) => (
                   <div
                     key={`testimonial-${rowIndex}-${i}-${j}`}
-                    className='mx-3.5 w-96 rounded-2xl bg-zinc-950/[.01] shadow-inner-blur'
+                    className='mx-2 sm:mx-3.5 w-72 sm:w-96 rounded-2xl bg-zinc-950/[.01] shadow-inner-blur'
                   >
-                    <div className='flex h-full w-full flex-col rounded-2xl border border-violet-200/[.06] p-6'>
+                    <div className='flex h-full w-full flex-col rounded-2xl border border-violet-200/[.06] p-4 sm:p-6'>
                       <div className='flex items-center'>
-                        <div className='flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(to_top_right,rgba(113,113,122,0.3),rgba(24,24,27,1)),linear-gradient(rgba(9,9,11,0.5),rgba(9,9,11,0.5))]'>
+                        <div className='flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[linear-gradient(to_top_right,rgba(113,113,122,0.3),rgba(24,24,27,1)),linear-gradient(rgba(9,9,11,0.5),rgba(9,9,11,0.5))]'>
                           <Image
-                            className='h-[42px] w-[42px] rounded-full object-cover'
+                            className='h-[38px] w-[38px] sm:h-[42px] sm:w-[42px] rounded-full object-cover'
                             src={testimonial.avatar}
                             alt={testimonial.name}
                           />
                         </div>
                         <div className='ml-2.5 flex flex-col justify-center'>
-                          <span className='text-sm font-semibold text-white'>
+                          <span className='text-xs sm:text-sm font-semibold text-white line-clamp-1'>
                             {testimonial.name}
                           </span>
-                          <span className='text-sm font-medium text-zinc-400'>
+                          <span className='text-xs sm:text-sm font-medium text-zinc-400 line-clamp-1'>
                             {testimonial.title}
                           </span>
                         </div>
                       </div>
-                      <p className='mt-4 text-lg text-zinc-100'>
+                      <p className='mt-4 text-base sm:text-lg text-zinc-100 line-clamp-4 sm:line-clamp-none'>
                         &ldquo;{testimonial.quote}&rdquo;
                       </p>
                     </div>

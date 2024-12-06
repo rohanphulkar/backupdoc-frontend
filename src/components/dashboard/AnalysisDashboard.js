@@ -256,8 +256,33 @@ const AnalysisDashboard = ({ id }) => {
     }
   }, [token])
 
-  const deleteLegend = (id) => {
-    setLegends(legends.filter((legend) => legend.id !== id))
+  const [deletingLabel, setDeletingLabel] = useState(false)
+
+  const deleteLegend = async (id) => {
+    try {
+      setDeletingLabel(true)
+      const { data: result, status } = await api.delete(
+        `/predict/delete-label/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      if (status === 200) {
+        setPrediction({
+          ...prediction,
+          predicted_image: result.annotated_image,
+        })
+        setLegends(legends.filter((legend) => legend.id !== id))
+        toast.success('Detection removed from image')
+      } else {
+        toast.error('Something went wrong!')
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
+    } finally {
+      setDeletingLabel(false)
+    }
   }
 
   const rotateClockwise = () => {
@@ -270,13 +295,19 @@ const AnalysisDashboard = ({ id }) => {
   const handleMouseDown = (e) => {
     if (imageScale > 1) {
       setIsDragging(true)
-      setDragStart({ x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y })
+      setDragStart({
+        x: e.clientX - imagePosition.x,
+        y: e.clientY - imagePosition.y,
+      })
     }
   }
 
   const handleMouseMove = (e) => {
     if (isDragging) {
-      setImagePosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y })
+      setImagePosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      })
     }
   }
 
@@ -439,13 +470,17 @@ const AnalysisDashboard = ({ id }) => {
                       <img
                         src={prediction.original_image}
                         alt='Original Image'
-                        style={{ transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)` }}
+                        style={{
+                          transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)`,
+                        }}
                         className={`h-auto w-full rounded-lg object-contain shadow-lg transition-all duration-500 ease-in-out ${showAnalyzed ? 'opacity-0' : 'opacity-100'} absolute left-0 top-0`}
                       />
                       <img
                         src={prediction.predicted_image}
                         alt='Analyzed Image'
-                        style={{ transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)` }}
+                        style={{
+                          transform: `scale(${imageScale}) rotate(${rotated}deg) translate(${imagePosition.x}px, ${imagePosition.y}px)`,
+                        }}
                         className={`predicted-image h-auto w-full rounded-lg object-contain shadow-lg transition-all duration-500 ease-in-out ${showAnalyzed ? 'opacity-100' : 'opacity-0'}`}
                       />
                     </div>
@@ -502,7 +537,11 @@ const AnalysisDashboard = ({ id }) => {
                       return (
                         <div
                           key={index}
-                          className={`group relative rounded-lg px-3 py-2 transition-all duration-300 ease-in-out ${colors.bg} ${colors.hover}`}
+                          className={`group relative rounded-lg px-3 py-2 transition-all duration-300 ease-in-out ${
+                            deletingLabel
+                              ? 'pointer-events-none opacity-50'
+                              : ''
+                          } ${colors.bg} ${colors.hover}`}
                         >
                           <div className='flex items-center gap-3'>
                             <div
@@ -521,12 +560,17 @@ const AnalysisDashboard = ({ id }) => {
                             onClick={() => {
                               deleteLegend(legend.id)
                             }}
+                            disabled={deletingLabel}
                             className='absolute left-0 top-0 z-10 hidden h-full w-full items-center justify-center rounded-lg bg-red-500/90 transition-all duration-300 ease-in-out group-hover:flex group-hover:py-2'
                           >
-                            <MultiplicationSignIcon
-                              className='text-gray-50'
-                              fill='#ffffff'
-                            />
+                            {deletingLabel ? (
+                              <Loading02Icon className='animate-spin text-gray-50' />
+                            ) : (
+                              <MultiplicationSignIcon
+                                className='text-gray-50'
+                                fill='#ffffff'
+                              />
+                            )}
                           </button>
                         </div>
                       )

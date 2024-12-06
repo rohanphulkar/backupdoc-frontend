@@ -64,7 +64,7 @@ export function StoryWithValues() {
           <div className='relative z-10 flex flex-col'>
             <ContentPill Icon={BuildingOffice2Icon} text='Who we are' />
             <h2 className='mt-5 text-4xl font-bold leading-extratight text-violet-100 lg:text-[2.75rem] xl:leading-extratight'>
-              Founder's vision
+              Founder's Vision
             </h2>
 
             {/* Text content */}
@@ -106,23 +106,24 @@ export function StoryWithValues() {
             Our Journey
           </h2>
           <p className='text-lg leading-8 text-zinc-300'>
-            What began as a tool to aid dentists has rapidly evolved into a
-            platform that is reshaping the future of dental care. As we continue
-            to develop and expand, our goal remains the same: to provide the
-            best AI-powered solutions for dental professionals. From diagnostics
-            to patient management, BackupDoc is committed to being a trusted
-            partner in your practice’s success.
+            What started as an innovative solution for dental diagnostics has
+            evolved into a comprehensive platform that is defining the future of
+            dental care. Our continuous growth and development are driven by a
+            singular mission: to deliver state-of-the-art AI-powered solutions
+            that empower dental professionals. From advanced diagnostics to
+            streamlined patient management, BackupDoc stands as your trusted
+            partner in elevating the standard of dental practice.
           </p>
           {/* New paragraph content */}
           <p className='mt-6 text-center text-xs leading-relaxed text-white'>
-            <span className='inline-block font-serif text-5xl'>“</span>
+            <span className='inline-block font-serif text-5xl'>"</span>
             As a dedicated tooth fairy, I once got a thumbs down from a client
             on what I thought
             <br />
             <span className='m-0 p-0'>was top-notch dental work.</span>
             <br />
             Digging deeper, it turned out another tooth fairy had given my
-            client a wrong
+            client the wrong
             <br />
             impression, leading to unnecessary suspicion.
             <br />
@@ -134,9 +135,9 @@ export function StoryWithValues() {
             BackupDoc steps into this space, providing trustworthy AI-backed
             second opinions,
             <br />
-            giving both tooth fairies and clients trust in the diagnostic
+            giving both tooth fairies and clients confidence in the diagnostic
             journey.
-            <span className='mt-4 inline-block font-serif text-5xl'>”</span>
+            <span className='mt-4 inline-block font-serif text-5xl'>"</span>
           </p>
         </div>
       </div>

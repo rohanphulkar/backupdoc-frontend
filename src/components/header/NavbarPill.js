@@ -34,7 +34,6 @@ import {
   DisclosurePanel,
 } from '@headlessui/react'
 
-import logo from '@/images/logo.png'
 import logoIcon from '@/images/logo.jpeg'
 import profileUser from '@/images/profile-user.png'
 const pages = [
@@ -334,7 +333,7 @@ export const NavbarPill = () => {
                 className='flex flex-shrink-0 items-center py-2'
               >
                 <Image
-                  src={logo}
+                  src={logoIcon}
                   alt='Nebula Logo'
                   className='hidden h-[26px] w-auto min-[402px]:block'
                 />

@@ -9,20 +9,119 @@ import { toast } from 'sonner'
 import { Loading02Icon } from 'hugeicons-react'
 import { useRouter } from 'next/navigation'
 
+function isXrayImage(file) {
+  if (!file.type.startsWith('image/')) {
+    return { isXray: false, message: 'Not an image file.' }
+  }
+
+  const img = document.createElement('img')
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+
+  img.src = URL.createObjectURL(file)
+
+  return new Promise((resolve) => {
+    img.onload = () => {
+      URL.revokeObjectURL(img.src)
+      canvas.width = img.width
+      canvas.height = img.height
+      context.drawImage(img, 0, 0)
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+      const data = imageData.data
+
+      let totalBrightness = 0
+      let totalContrast = 0
+      let totalPixels = data.length / 4
+      let brightPixels = 0
+      let grayscalePixels = 0
+      let darkPixels = 0
+
+      // Single pass analysis
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i]
+        const g = data[i + 1]
+        const b = data[i + 2]
+
+        // Calculate brightness
+        const brightness = (r + g + b) / 3
+        totalBrightness += brightness
+
+        if (brightness > 200) brightPixels++
+        if (brightness < 50) darkPixels++
+
+        // Check grayscale with more lenient threshold
+        if (
+          Math.abs(r - g) < 15 &&
+          Math.abs(g - b) < 15 &&
+          Math.abs(r - b) < 15
+        ) {
+          grayscalePixels++
+        }
+      }
+
+      const avgBrightness = totalBrightness / totalPixels
+      const brightPixelRatio = brightPixels / totalPixels
+      const darkPixelRatio = darkPixels / totalPixels
+      const grayscaleRatio = grayscalePixels / totalPixels
+
+      // Adjusted criteria for dental X-rays
+      const isXray =
+        grayscaleRatio > 0.7 && // More lenient grayscale requirement
+        avgBrightness > 40 && // Lower minimum brightness
+        avgBrightness < 220 && // Higher maximum brightness
+        brightPixelRatio > 0.02 && // Allow fewer bright areas
+        brightPixelRatio < 0.5 && // Allow more bright areas
+        darkPixelRatio > 0.1 // Ensure some dark areas for teeth/bone structure
+
+      resolve({
+        isXray,
+        message: isXray
+          ? 'Valid dental X-ray image detected.'
+          : 'Not a valid dental X-ray image. Please upload a proper dental X-ray image.',
+      })
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      resolve({
+        isXray: false,
+        message: 'Error loading image. Please try again with a different file.',
+      })
+    }
+  })
+}
+
 const UploadModal = ({ isOpen, onClose, id, user, fetchXrays }) => {
   const [uploadPreview, setUploadPreview] = useState(null)
   const [image, setImage] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [error, setError] = useState('')
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png'],
     },
     maxFiles: 1,
-    onDrop: ([file]) => {
+    onDrop: async ([file]) => {
       if (file) {
-        setUploadPreview(URL.createObjectURL(file))
-        setImage(file)
+        try {
+          setError('')
+          const { isXray, message } = await isXrayImage(file)
+          if (isXray) {
+            setUploadPreview(URL.createObjectURL(file))
+            setImage(file)
+            toast.success('Valid X-ray image detected')
+          } else {
+            setUploadPreview(null)
+            setImage(null)
+            setError(message)
+            toast.error(message)
+          }
+        } catch (err) {
+          setError('Error processing image. Please try again.')
+          toast.error('Error processing image')
+        }
       }
     },
   })
@@ -53,11 +152,19 @@ const UploadModal = ({ isOpen, onClose, id, user, fetchXrays }) => {
       setIsUploading(false)
       setUploadPreview(null)
       setImage(null)
+      setError('')
       onClose()
     }
   }
 
   if (!isOpen) return null
+
+  const closeModal = () => {
+    setError('')
+    setUploadPreview(null)
+    setImage(null)
+    onClose()
+  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-sm sm:p-4'>
@@ -117,13 +224,16 @@ const UploadModal = ({ isOpen, onClose, id, user, fetchXrays }) => {
               <p className='text-xs text-gray-400 sm:text-sm'>
                 Click or drag file to upload
               </p>
+              {error && (
+                <p className='mt-2 text-xs text-red-400 sm:text-sm'>{error}</p>
+              )}
             </div>
           )}
         </div>
 
         <div className='mt-4 flex justify-end gap-2'>
           <button
-            onClick={onClose}
+            onClick={closeModal}
             className='rounded-lg px-3 py-1.5 text-xs text-gray-400 hover:bg-gray-800/50 sm:px-4 sm:py-2 sm:text-sm'
             disabled={isUploading}
           >

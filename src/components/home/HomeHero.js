@@ -12,6 +12,7 @@ import { CLIENTS } from '@/config'
 import data from '@/images/data.jpeg'
 import data2 from '@/images/data2.jpeg'
 import hero from '@/images/hero-optimized.png'
+
 export const HomeHero = () => {
   let [isOpen, setIsOpen] = useState(false)
   const sliderRef = useRef(null)
@@ -72,13 +73,13 @@ export const HomeHero = () => {
   }, [handleMouseMove, handleMouseDown, handleMouseUp])
 
   return (
-    <Container className='gap-16 pb-16 pt-20 sm:pb-20 lg:pt-28'>
+    <Container className='gap-8 pb-12 pt-16 sm:gap-16 sm:pb-20 lg:pt-28'>
       {/* Text content */}
       <div>
         <div className='relative z-10 flex flex-col items-center'>
-          <h1 className='mt-5 max-w-5xl text-center text-[2.75rem] font-bold leading-[1.125] text-violet-100 sm:text-5xl sm:leading-[1.125] md:text-6xl md:leading-[1.125] lg:text-[64px]'>
-            Elevate Patient Trust and Dental Revenue with&nbsp;
-            <span className='relative inline-block text-nowrap'>
+          <h1 className='mt-4 max-w-5xl px-4 text-center text-2xl font-bold leading-tight text-violet-100 sm:mt-5 sm:text-5xl sm:leading-[1.125] md:text-6xl lg:text-[64px]'>
+            Elevate Patient Trust and Dental Revenue with{' '}
+            <span className='relative inline-block'>
               <span className='relative z-10 bg-gradient-to-b from-violet-400 via-violet-400 to-violet-500 bg-clip-text text-transparent'>
                 BackupDoc
               </span>
@@ -87,15 +88,14 @@ export const HomeHero = () => {
               </span>
             </span>
           </h1>
-          <p className='mt-5 max-w-xl text-center text-[17px] leading-8 text-zinc-200 sm:text-lg sm:leading-8'>
+          <p className='mt-4 max-w-xl px-4 text-center text-base leading-7 text-zinc-200 sm:mt-5 sm:text-lg sm:leading-8'>
             Empowering dentists to provide trustworthy care, enhance patient
             understanding, and increase retention through AI-supported
-            diagnostics..
+            diagnostics.
           </p>
-          <div className='mt-8 flex items-center justify-center space-x-3 sm:space-x-5'>
+          <div className='mt-6 flex flex-col items-center justify-center space-y-3 sm:mt-8 sm:flex-row sm:space-x-5 sm:space-y-0'>
             <Button id='top-cta' href='/signup'>
-              {' '}
-              Get started{' '}
+              Get started
             </Button>
             <Button
               variant='tertiary'
@@ -148,10 +148,10 @@ export const HomeHero = () => {
         </Dialog>
       </div>
 
-      {/* Slide Comparasion */}
-      <div className='container mx-auto flex flex-col items-center justify-center space-y-6 px-4 py-10 lg:flex-row lg:space-x-6 lg:space-y-0'>
+      {/* Slide Comparison */}
+      <div className='container mx-auto flex flex-col items-center justify-center space-y-6 px-4 py-6 sm:py-10 lg:flex-row lg:space-x-6 lg:space-y-0'>
         {/* Left side static image */}
-        <div className='relative h-96 w-full max-w-2xl overflow-hidden rounded-lg shadow-lg lg:w-3/4'>
+        <div className='relative h-64 w-full max-w-2xl overflow-hidden rounded-lg shadow-lg sm:h-96 lg:w-3/4'>
           <Image
             src={hero}
             alt='hero'
@@ -162,7 +162,7 @@ export const HomeHero = () => {
         {/* Right side comparison slider */}
         <div
           ref={sliderRef}
-          className='relative h-96 w-full max-w-2xl cursor-col-resize overflow-hidden rounded-lg border border-gray-500 shadow-lg lg:w-1/2'
+          className='relative h-64 w-full max-w-2xl cursor-col-resize overflow-hidden rounded-lg border border-gray-500 shadow-lg sm:h-96 lg:w-1/2'
         >
           {/* Main image */}
           <div className='relative h-full w-full'>
@@ -189,10 +189,10 @@ export const HomeHero = () => {
           </div>
 
           {/* Labels */}
-          <span className='absolute left-4 top-2 z-10 rounded bg-black bg-opacity-50 px-2 py-1 text-white'>
+          <span className='absolute left-2 top-2 z-10 rounded bg-black bg-opacity-50 px-2 py-1 text-sm text-white sm:left-4'>
             Before
           </span>
-          <span className='absolute right-4 top-2 z-10 rounded bg-red-600 px-2 py-1 text-white'>
+          <span className='absolute right-2 top-2 z-10 rounded bg-red-600 px-2 py-1 text-sm text-white sm:right-4'>
             After
           </span>
 
@@ -201,9 +201,7 @@ export const HomeHero = () => {
             ref={handleRef}
             className='absolute left-1/2 top-0 z-20 flex -translate-x-1/2 transform cursor-col-resize flex-col items-center'
           >
-            {/* Line for dividing the images */}
             <div className='h-full w-1 bg-white'></div>
-            {/* Handle button */}
             <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gray-800'>
               <i className='fas fa-chevron-left text-white'></i>
               <i className='fas fa-chevron-right text-white'></i>
@@ -214,13 +212,13 @@ export const HomeHero = () => {
       </div>
 
       {/* Social proof */}
-      <div className='relative mx-auto mt-20 max-w-5xl overflow-hidden sm:mt-24 sm:px-10 lg:mt-28'>
-        <p className='text-center text-[13px] font-bold uppercase tracking-wide text-violet-50/80 sm:text-sm sm:font-extrabold sm:tracking-wider'>
+      <div className='relative mx-auto mt-12 max-w-5xl overflow-hidden sm:mt-24 sm:px-10 lg:mt-28'>
+        <p className='text-center text-xs font-bold uppercase tracking-wide text-violet-50/80 sm:text-sm sm:font-extrabold sm:tracking-wider'>
           TRUSTED BY DENTAL CLINICS WORLDWIDE
         </p>
 
         {/* Logos */}
-        <div className='relative mt-8 overflow-hidden [mask:linear-gradient(90deg,_transparent,_white_20%,_white_80%,_transparent)]'>
+        <div className='relative mt-6 overflow-hidden sm:mt-8 [mask:linear-gradient(90deg,_transparent,_white_20%,_white_80%,_transparent)]'>
           <div className='flex w-max animate-infiniteScroll items-center justify-around'>
             {[...Array(2)].map((_, index) => (
               <div
@@ -230,34 +228,13 @@ export const HomeHero = () => {
                 {CLIENTS.map((client) => (
                   <client.logo
                     key={`homehero-${client.name}-${index}`}
-                    className='mx-3 h-24 w-24 scale-90 sm:mx-6 sm:scale-100'
+                    className='mx-2 h-16 w-16 scale-75 sm:mx-6 sm:h-24 sm:w-24 sm:scale-100'
                   />
                 ))}
               </div>
             ))}
           </div>
         </div>
-        {/* <div className='relative mt-8 overflow-hidden [mask:linear-gradient(90deg,_transparent,_white_20%,_white_80%,_transparent)]'>
-          <div className='flex w-max animate-infiniteScroll items-center justify-around'>
-            {[...Array(2)].map((_, index) => (
-              <div
-                key={`homehero-clients-col-${index}`}
-                className='flex w-1/2 items-center'
-              >
-                {CLIENTS.map((client) => (
-                  <img
-                    key={`homehero-${client.name}-${index}`}
-                    src={client.logo}
-                    alt={client.name}
-                    width={100} // Set a base width
-                    height={60} // Adjust height to preserve aspect ratio
-                    className='mx-3 scale-90 sm:mx-6 sm:scale-100'
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        </div> */}
       </div>
     </Container>
   )
