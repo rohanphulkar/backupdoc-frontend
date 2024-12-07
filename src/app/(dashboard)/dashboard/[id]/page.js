@@ -292,7 +292,7 @@ function PatientHeader({ patient, doctor, id, user, fetchXrays }) {
             </button>
 
             <button
-              onClick={() => router.push('/pricing')}
+              onClick={() => [(window.location.href = '/pricing')]}
               className='rounded-lg bg-gradient-to-r from-pink-600/90 to-purple-600/90 px-3 py-1.5 text-xs font-medium text-gray-100 shadow-lg backdrop-blur-sm transition-all hover:from-pink-700/90 hover:to-purple-700/90 hover:shadow-xl active:scale-95 sm:px-4 sm:py-2 sm:text-sm'
             >
               Upgrade Pro

@@ -8,37 +8,7 @@ import spaceSpotlight from '@/images/space-spotlight.png'
 import founder from '@/images/Founders.png'
 import cosmicButterfly from '@/images/cosmic-butterfly-2.svg?url'
 
-import logic from '@/icons/nucleo/logic-24-colored.svg'
-import meeting from '@/icons/nucleo/meeting-24-colored.svg'
-import globe from '@/icons/nucleo/globe-24-colored.svg'
-import wateringPlants from '@/icons/nucleo/watering-plants-24-colored.svg'
-
-// const values = [
-//   {
-//     title: 'Commitment to Excellence',
-//     description:
-//       'Our dedication to excellence is unwavering. Nebula strives for the highest quality in every innovation and service we deliver.',
-//     icon: logic,
-//   },
-//   {
-//     title: 'Collaboration at Core',
-//     description:
-//       'We believe in the power of collective intelligence. Collaboration is the heartbeat of our company culture and platform design.',
-//     icon: meeting,
-//   },
-//   {
-//     title: 'Global Empathy',
-//     description:
-//       'Understanding global needs drives us forward. Nebula is committed to fostering an inclusive environment, embracing diverse perspectives.',
-//     icon: globe,
-//   },
-//   {
-//     title: 'Sustainable Growth',
-//     description:
-//       'Growth at Nebula is nurtured sustainably. We invest in long-term development, ensuring our impact is positive and enduring.',
-//     icon: wateringPlants,
-//   },
-// ]
+import { QuoteDownIcon, QuoteUpIcon } from 'hugeicons-react'
 
 export function StoryWithValues() {
   return (
@@ -115,30 +85,21 @@ export function StoryWithValues() {
             partner in elevating the standard of dental practice.
           </p>
           {/* New paragraph content */}
-          <p className='mt-6 text-center text-xs leading-relaxed text-white'>
-            <span className='inline-block font-serif text-5xl'>"</span>
-            As a dedicated tooth fairy, I once got a thumbs down from a client
-            on what I thought
-            <br />
-            <span className='m-0 p-0'>was top-notch dental work.</span>
-            <br />
-            Digging deeper, it turned out another tooth fairy had given my
-            client the wrong
-            <br />
-            impression, leading to unnecessary suspicion.
-            <br />
-            This got me thinking about an unbiased, clear-cut, third-party
-            system to boost trust and
-            <br />
-            precision in dental diagnostics.
-            <br />
-            BackupDoc steps into this space, providing trustworthy AI-backed
-            second opinions,
-            <br />
-            giving both tooth fairies and clients confidence in the diagnostic
-            journey.
-            <span className='mt-4 inline-block font-serif text-5xl'>"</span>
-          </p>
+          <div className='mt-6 text-justify text-sm leading-relaxed text-white'>
+            <blockquote className='relative border-l-4 border-violet-300 pl-4 italic'>
+              <QuoteUpIcon size={20} className='text-white' />
+              As a practicing dentist, I once received negative feedback from a
+              patient regarding what I believed was a thorough diagnosis. Upon
+              investigation, it became clear that conflicting opinions from
+              another dentist had created uncertainty and distrust. This
+              experience inspired me to develop an objective, transparent system
+              that could enhance confidence in dental diagnostics. BackupDoc
+              emerged from this vision, offering reliable AI-powered second
+              opinions that build trust between dental professionals and their
+              patients throughout the diagnostic process.
+              <QuoteDownIcon size={20} className='text-white' />
+            </blockquote>
+          </div>
         </div>
       </div>
     </section>

@@ -3,7 +3,6 @@ import { Container } from '@/components/shared/Container'
 import { ContainerOutline } from '@/components/shared/ContainerOutline'
 import { ContactForm } from '@/components/contact/ContactForm'
 import { ContentPill } from '@/components/shared/ContentPill'
-import { CLIENTS } from '@/config'
 
 import spaceSpotlight from '@/images/space-spotlight.png'
 import SendIcon from '@/icons/nucleo/send-16.svg'

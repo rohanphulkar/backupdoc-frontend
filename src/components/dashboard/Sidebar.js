@@ -199,7 +199,10 @@ export default function Sidebar({ children }) {
             </svg>
           </button>
 
-          <div className='flex items-center gap-2 border-b border-gray-800 px-6 py-4'>
+          <Link
+            href='/'
+            className='flex items-center gap-2 border-b border-gray-800 px-6 py-4'
+          >
             <Image
               src={logo}
               alt='Company Logo'
@@ -208,7 +211,7 @@ export default function Sidebar({ children }) {
               className='rounded-full shadow-sm ring-2 ring-gray-500'
             />
             <span className='text-xl font-bold text-gray-100'>BackupDoc</span>
-          </div>
+          </Link>
 
           <div className='p-4'>
             <div className='relative mb-3'>

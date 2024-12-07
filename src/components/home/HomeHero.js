@@ -218,8 +218,8 @@ export const HomeHero = () => {
         </p>
 
         {/* Logos */}
-        <div className='relative mt-6 overflow-hidden sm:mt-8 [mask:linear-gradient(90deg,_transparent,_white_20%,_white_80%,_transparent)]'>
-          <div className='flex w-max animate-infiniteScroll items-center justify-around'>
+        <div className='relative mt-6 overflow-hidden rounded-xl bg-white/10 backdrop-blur-sm [mask:linear-gradient(90deg,_transparent,_white_20%,_white_80%,_transparent)] sm:mt-8'>
+          <div className='flex w-max animate-infiniteScroll items-center justify-around py-6'>
             {[...Array(2)].map((_, index) => (
               <div
                 key={`homehero-clients-col-${index}`}
@@ -228,7 +228,7 @@ export const HomeHero = () => {
                 {CLIENTS.map((client) => (
                   <client.logo
                     key={`homehero-${client.name}-${index}`}
-                    className='mx-2 h-16 w-16 scale-75 sm:mx-6 sm:h-24 sm:w-24 sm:scale-100'
+                    className='mx-3 h-20 w-20 scale-90 brightness-200 contrast-200 invert sm:mx-8 sm:h-32 sm:w-32 sm:scale-100'
                   />
                 ))}
               </div>

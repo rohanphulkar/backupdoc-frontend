@@ -6,59 +6,113 @@ import { InvestorTestimonials } from './InvestorTestimonials'
 import { Container } from '@/components/shared/Container'
 import { ContentPill } from '@/components/shared/ContentPill'
 import { StarField } from '@/components/shared/StarField'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 import cosmicButterfly from '@/images/cosmic-butterfly.png'
 import TagsStackIcon from '@/icons/nucleo/tags-stack-16.svg'
+import { useSelector } from 'react-redux'
+import { api } from '@/api/api'
+import { toast } from 'sonner'
 
 const pricingPlans = [
   {
     title: 'Free',
     price: {
       monthly: 'Free',
-      annually: 'Free',
+      yearly: 'Free',
     },
     description:
       'Ideal for individual professionals and small teams just beginning their journey looking for a streamlined solution.',
     popular: false,
+    accountType: 'free',
   },
   {
     title: 'Starter',
     link: '/checkout?plan=doctor',
     price: {
       monthly: '999',
-      annually: '9590',
+      yearly: '9590',
     },
     description:
       'Ideal for individual professionals and small teams just beginning their journey looking for a streamlined solution.',
     popular: false,
+    accountType: 'doctor',
   },
   {
     title: 'Pro',
     link: '/checkout?plan=premium',
     price: {
       monthly: '1999',
-      annually: '19190',
+      yearly: '19190',
     },
     description:
       'Designed for growing teams and businesses seeking to enhance their productivity.',
     popular: true,
+    accountType: 'premium',
   },
   {
     title: 'Enterprise',
+    link: '/contact',
     price: {
       monthly: 'Custom',
-      annually: 'Custom',
+      yearly: 'Custom',
     },
     description:
       'Tailored for large organizations requiring a comprehensive solution that evolves with your enterprise.',
     popular: false,
+    accountType: 'enterprise',
   },
 ]
 
 export function PricingHero() {
   const [billingType, setBillingType] = useState('monthly')
+  const router = useRouter()
+
+  const user = useSelector((state) => state.auth.token)
+  const [profile, setProfile] = useState(null)
+  const [accountType, setAccountType] = useState(null)
+
+  const fetchProfile = async () => {
+    try {
+      const { data: result, status } = await api.get('/user/profile', {
+        headers: {
+          Authorization: `Bearer ${user}`,
+        },
+      })
+      if (status === 200) {
+        setProfile(result?.user)
+        setAccountType(result?.user?.account_type)
+      } else {
+        toast.error('Something went wrong!')
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response.data.error || 'Something went wrong!')
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile()
+    }
+  }, [user])
+
+  const handlePlanClick = (link) => {
+    if (!user || profile === null) {
+      router.push('/signup')
+      return
+    }
+    router.push(link)
+  }
+
+  const isUpgradable = (planAccountType) => {
+    const accountTypes = ['free', 'doctor', 'premium', 'enterprise']
+    const currentIndex = accountTypes.indexOf(accountType)
+    const planIndex = accountTypes.indexOf(planAccountType)
+    return planIndex > currentIndex
+  }
 
   return (
     <div className='pb-12 pt-20 md:pb-20 lg:py-28'>
@@ -103,15 +157,15 @@ export function PricingHero() {
                   Monthly
                 </button>
                 <button
-                  onClick={() => setBillingType('annually')}
+                  onClick={() => setBillingType('yearly')}
                   className={cn(
                     'group relative inline-flex items-center overflow-hidden rounded-full px-4 py-2 text-sm font-semibold leading-4 antialiased',
-                    billingType === 'annually'
+                    billingType === 'yearly'
                       ? 'bg-btn-primary text-violet-50 shadow-btn-primary'
                       : 'text-violet-50 hover:text-white'
                   )}
                 >
-                  Annually
+                  Yearly
                 </button>
               </div>
             </div>
@@ -137,7 +191,15 @@ export function PricingHero() {
                       plan={plan}
                       price={plan.price[billingType]}
                       billingType={billingType}
-                      link={`${plan.link}&billing=${billingType}`}
+                      onPlanClick={() => handlePlanClick(`${plan.link}&billing=${billingType}`)}
+                      disabled={!isUpgradable(plan.accountType)}
+                      message={
+                        accountType === plan.accountType
+                          ? 'Current Plan'
+                          : !isUpgradable(plan.accountType)
+                            ? 'Not Available'
+                            : ''
+                      }
                     />
                   </div>
                 ))}
