@@ -36,9 +36,6 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '@/redux/AuthSlice'
 
-import logoIcon from '@/images/logo.jpeg'
-import profileUser from '@/images/profile-user.png'
-
 const links = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
@@ -307,13 +304,17 @@ export const NavbarPill = () => {
                 className='flex flex-shrink-0 items-center py-2'
               >
                 <Image
-                  src={logoIcon}
+                  src={`/logo.svg`}
+                  width={100}
+                  height={100}
                   alt='Nebula Logo'
                   className='hidden h-[26px] w-auto min-[402px]:block'
                 />
 
                 <Image
-                  src={logoIcon}
+                  src={`/logo.svg`}
+                  width={100}
+                  height={100}
                   alt='Nebula Logo Icon'
                   className='h-[26px] w-auto min-[402px]:hidden'
                 />

@@ -23,9 +23,11 @@ export const Header = () => {
           <div className='relative z-10 hidden shrink-0 items-center md:flex'>
             <Link href='/' aria-label='Home' className='flex items-center'>
               <Image
-                src={logo}
+                src={`/logo.svg`}
+                width={200}
+                height={200}
                 alt='Company logo'
-                className='h-7 w-auto lg:h-8'
+                className='h-12 w-auto lg:h-14'
               />
             </Link>
           </div>

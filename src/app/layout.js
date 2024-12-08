@@ -1,7 +1,5 @@
 import clsx from 'clsx'
 
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
 import '@/styles/globals.css'
 import { Toaster } from 'sonner'
 import { ReduxProvider } from '@/redux/Provider'

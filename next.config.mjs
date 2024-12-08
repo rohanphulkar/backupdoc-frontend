@@ -50,6 +50,7 @@ const nextConfig = {
   images: {
     domains: ['localhost', '127.0.0.1'],
   },
+  optimizeFonts: false,
 }
 
 export default nextConfig
