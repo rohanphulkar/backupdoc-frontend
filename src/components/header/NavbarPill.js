@@ -33,36 +33,11 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@headlessui/react'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '@/redux/AuthSlice'
 
 import logoIcon from '@/images/logo.jpeg'
 import profileUser from '@/images/profile-user.png'
-const pages = [
-  // { label: 'UserDashbaord', href: '/', icon: profileUser },
-  { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'About', href: '/about', icon: UsersIcon },
-  {
-    label: 'Pricing',
-    href: '/pricing',
-    icon: CreditCardIcon,
-  },
-  {
-    label: 'Contact',
-    href: '/contact',
-    icon: EnvelopeOpenIcon,
-  },
-  {
-    label: 'Sign in',
-    href: '/signin',
-    icon: UserCircleIcon,
-  },
-  { label: 'Sign up', href: '/signup', icon: UserPlusIcon },
-  {
-    label: 'Password reset',
-    href: 'password-reset',
-    icon: LockOpenIcon,
-  },
-  { label: '404', href: '/404', icon: ExclamationCircleIcon },
-]
 
 const links = [
   { label: 'Home', href: '/' },
@@ -70,6 +45,7 @@ const links = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Contact', href: '/contact' },
 ]
+
 const productOptions = [
   { label: 'Doctor', href: '/Doctor' },
   { label: 'Insurance', href: '/insurance' },
@@ -116,14 +92,12 @@ function MobileNavigation() {
           ))}
 
           <Disclosure as='div' className='block w-full'>
-            {/* Pages dropdown button */}
             <DisclosureButton className='group flex w-full items-center justify-between px-1.5 pb-2 pt-4 text-[15px] font-medium text-violet-50 drop-shadow-[-4px_-4px_6px_rgba(237,233,254,0.2)] duration-200 ease-in-out hover:text-violet-400/95 data-[open]:text-violet-400/95'>
-              <span>Pages</span>
-
+              <span>Products</span>
               <ChevronRightIcon className='ml-2 h-4.5 w-4.5 text-violet-100/80 duration-200 ease-in-out group-hover:text-violet-400/80 group-data-[open]:rotate-90 group-data-[open]:text-violet-400/90' />
             </DisclosureButton>
             <DisclosurePanel className='space-y-1 px-3 pt-0.5'>
-              {pages.map((link) => (
+              {productOptions.map((link) => (
                 <Link
                   key={`mobile-navbar-dropdown-link-${link.href}`}
                   href={link.href}
@@ -140,7 +114,6 @@ function MobileNavigation() {
                       ) : (
                         <link.icon className='mr-2 h-4 w-4 text-violet-100/60 group-hover:text-violet-300/80' />
                       ))}
-
                     {link.label}
                   </span>
                 </Link>
@@ -165,7 +138,7 @@ function DropDownMenu({ dropdownGap, dropdownPadding }) {
       modal={false}
     >
       {productOptions.map((link) => (
-        <MenuItem key={`pages-dropdiwn-link-${link.href}`}>
+        <MenuItem key={`products-dropdown-link-${link.href}`}>
           <Link
             href={link.href}
             className='group relative z-10 block text-nowrap px-4 py-2 text-sm font-medium text-violet-50 drop-shadow-[-4px_-4px_6px_rgba(237,233,254,0.2)] duration-200 ease-in-out data-[focus]:text-violet-400/95 data-[focus]:shadow-inner-blur-light data-[focus]:drop-shadow-[-4px_-4px_6px_rgba(196,181,253,0.2)]'
@@ -174,7 +147,6 @@ function DropDownMenu({ dropdownGap, dropdownPadding }) {
               {link.icon && (
                 <link.icon className='mr-2 h-4 w-4 text-violet-200/60 group-data-[focus]:text-violet-300/80' />
               )}
-
               {link.label}
             </span>
             <span className='absolute inset-y-0 left-0 w-px bg-gradient-to-b from-violet-400/0 via-violet-400/90 to-violet-400/0 opacity-0 duration-200 ease-in-out group-data-[focus]:opacity-100' />
@@ -186,6 +158,8 @@ function DropDownMenu({ dropdownGap, dropdownPadding }) {
 }
 
 export const NavbarPill = () => {
+  const { token } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
   const pathname = usePathname()
   // Initialize to true in order to dynamically get width of the cta button
   const [showButton, setShowButton] = useState(true)
@@ -364,34 +338,47 @@ export const NavbarPill = () => {
               </Link>
             ))}
 
-            {/* Pages dropdown button */}
+            {/* Products dropdown button */}
             <MenuButton
               type='button'
               className='group relative z-40 hidden h-full items-center px-3 py-2.5 text-sm font-medium text-violet-50 outline-none drop-shadow-[-4px_-4px_6px_rgba(237,233,254,0.2)] duration-200 ease-in-out hover:text-violet-400/95 data-[open]:text-violet-400 data-[open]:drop-shadow-[-4px_-4px_6px_rgba(196,181,253,0.2)] md:inline-flex lg:px-4'
               ref={dropdownButtonRef}
             >
-              <span>Product</span>
+              <span>Products</span>
 
               <ChevronDownIcon className='ml-1 h-4.5 w-4.5 text-violet-50/90 duration-300 group-hover:text-violet-400/80 group-data-[open]:rotate-180 group-data-[open]:text-violet-400/90' />
             </MenuButton>
 
             <div className='relative z-20 ml-1 flex items-center sm:ml-3 md:hidden'>
-              <Button
-                href='/signin'
-                variant='tertiary'
-                size='sm'
-                className='overflow-hidden'
-              >
-                Sign in
-              </Button>
+              {token ? (
+                <Button
+                  onClick={() => dispatch(logout())}
+                  variant='tertiary'
+                  size='sm'
+                  className='overflow-hidden'
+                >
+                  Logout
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    href='/signin'
+                    variant='tertiary'
+                    size='sm'
+                    className='overflow-hidden'
+                  >
+                    Sign in
+                  </Button>
 
-              <Button
-                className='-mr-px rounded-full after:rounded-full'
-                href='/signup'
-                size='sm'
-              >
-                Get started
-              </Button>
+                  <Button
+                    className='-mr-px rounded-full after:rounded-full'
+                    href='/signup'
+                    size='sm'
+                  >
+                    Get started
+                  </Button>
+                </>
+              )}
 
               <Hamburger />
             </div>
@@ -401,22 +388,35 @@ export const NavbarPill = () => {
               ref={navCtaContainerRef}
             >
               <Transition show={showButton}>
-                <Button
-                  id='nav-cta'
-                  className={cn(
-                    'z-20 -mr-px ml-3 rounded-full transition-all duration-500 after:rounded-full data-[closed]:translate-x-full data-[closed]:opacity-0 data-[enter]:ease-out data-[leave]:ease-in'
-                  )}
-                  href='/signup'
-                  size='sm'
-                >
-                  Get started
-                </Button>
+                {token ? (
+                  <Button
+                    id='nav-cta'
+                    className={cn(
+                      'z-20 -mr-px ml-3 rounded-full transition-all duration-500 after:rounded-full data-[closed]:translate-x-full data-[closed]:opacity-0 data-[enter]:ease-out data-[leave]:ease-in'
+                    )}
+                    onClick={() => dispatch(logout())}
+                    size='sm'
+                  >
+                    Logout
+                  </Button>
+                ) : (
+                  <Button
+                    id='nav-cta'
+                    className={cn(
+                      'z-20 -mr-px ml-3 rounded-full transition-all duration-500 after:rounded-full data-[closed]:translate-x-full data-[closed]:opacity-0 data-[enter]:ease-out data-[leave]:ease-in'
+                    )}
+                    href='/signup'
+                    size='sm'
+                  >
+                    Get started
+                  </Button>
+                )}
               </Transition>
             </div>
           </div>
         </div>
 
-        {/* Pages dropdown */}
+        {/* Products dropdown */}
         <DropDownMenu
           dropdownGap={dropdownGap}
           dropdownPadding={dropdownPadding}
