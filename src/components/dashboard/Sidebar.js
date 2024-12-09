@@ -199,8 +199,8 @@ export default function Sidebar({ children }) {
             </svg>
           </button>
 
-          <Link
-            href='/'
+          <button
+            onClick={() => (window.location.href = '/')}
             className='flex items-center gap-2 border-b border-gray-800 px-6 py-4'
           >
             <Image
@@ -211,7 +211,7 @@ export default function Sidebar({ children }) {
               className='rounded-full shadow-sm ring-2 ring-gray-500'
             />
             <span className='text-xl font-bold text-gray-100'>BackupDoc</span>
-          </Link>
+          </button>
 
           <div className='p-4'>
             <div className='relative mb-3'>

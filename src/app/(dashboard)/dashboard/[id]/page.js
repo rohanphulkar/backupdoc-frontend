@@ -428,11 +428,6 @@ const PatientPage = () => {
                       our Pro plan to continue analyzing X-rays.
                     </p>
                   </div>
-                  <div className='mt-4'>
-                    <button className='inline-flex items-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-yellow-400'>
-                      Upgrade to Pro
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>

@@ -26,50 +26,45 @@ export default function Payment() {
       const response = await api.get(
         `/fetch-plan-details?plan_name=${planName}`
       )
-      const result = await response.data
-      const status = await response.status
-      if (status === 200) {
-        setSubtotal(result.amount / 100)
-        setTotal(result.amount / 100)
+      if (response.status === 200) {
+        setSubtotal(response.data.amount / 100)
+        setTotal(response.data.amount / 100)
       } else {
         toast.error('Something went wrong!')
       }
     } catch (error) {
-      console.log(error)
-      if (error.response) {
-        toast.error(error.response.data.error)
-      } else {
-        toast.error('Something went wrong!')
-      }
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
     }
   }
 
   useEffect(() => {
-    fetchPlanDetails()
-  }, [searchParams])
+    if (planName) {
+      fetchPlanDetails()
+    }
+  }, [planName])
 
   const handleApplyCoupon = async () => {
+    if (!couponCode) {
+      toast.error('Please enter a coupon code')
+      return
+    }
+
     setIsLoading(true)
     try {
       const response = await api.get(
         `/apply-coupon?plan_name=${planName}&coupon_code=${couponCode}`
       )
-      const result = await response.data
-      const status = await response.status
-      if (status === 200) {
-        setSubtotal(result.original_amount)
-        setDiscount(result.discount_amount)
-        setTotal(result.final_amount)
+      if (response.status === 200) {
+        setSubtotal(response.data.original_amount)
+        setDiscount(response.data.discount_amount)
+        setTotal(response.data.final_amount)
       } else {
         toast.error('Something went wrong!')
       }
     } catch (error) {
-      console.log(error)
-      if (error.response) {
-        toast.error(error.response.data.error)
-      } else {
-        toast.error('Something went wrong!')
-      }
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
     } finally {
       setIsLoading(false)
     }
@@ -77,46 +72,41 @@ export default function Payment() {
 
   async function handlePaymentSuccess(response) {
     try {
-      // {
-      //     "razorpay_payment_id": "pay_PQDxW6hjx0fSdl",
-      //     "razorpay_subscription_id": "sub_PQDwN6OBYGbLU3",
-      //     "razorpay_signature": "1d17638b53af015569f88aaf47f01567ce1416e27824b25a97cddee06777f662"
-      // }
       const res = await api.post(`/payment/verify`, response)
-      const result = await res.data
-      const status = await res.status
-      if (status === 200) {
+      if (res.status === 200) {
         setIsPaymentSuccessful(true)
       } else {
         toast.error('Something went wrong!')
       }
     } catch (error) {
-      console.log(error)
-      if (error.response) {
-        toast.error(error.response.data.error)
-      } else {
-        toast.error('Something went wrong!')
-      }
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
     }
   }
 
   const showRazorpay = async () => {
+    if (!user) {
+      toast.error('Please login to continue')
+      return
+    }
+
     setIsLoading(true)
     try {
-      const formData = {}
-      formData['plan'] = planName
-      formData['coupon'] = couponCode
+      const formData = {
+        plan: planName,
+        coupon: couponCode,
+        plan_type: billing
+      }
 
-      formData['plan_type'] = billing
       const response = await api.post(`/payment/create`, formData, {
         headers: {
           Authorization: `Bearer ${user}`,
         },
       })
-      const result = await response.data
+
       const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        subscription_id: result.subscription_id,
+        subscription_id: response.data.subscription_id,
         name: 'Backupdoc',
         description: 'Subscription Payment',
         handler: async (response) => {
@@ -130,12 +120,8 @@ export default function Payment() {
       const rzp1 = new window.Razorpay(razorpayOptions)
       rzp1.open()
     } catch (error) {
-      console.log(error)
-      if (error.response) {
-        toast.error(error.response.data.error)
-      } else {
-        toast.error('Something went wrong!')
-      }
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
     } finally {
       setIsLoading(false)
     }
@@ -144,65 +130,6 @@ export default function Payment() {
   return (
     <Container className='max-w-4xl py-10 sm:max-w-6xl lg:max-w-7xl'>
       <div className='mx-auto max-w-lg'>
-        {/* Left Column (Form Fields) */}
-        {/* <form className='space-y-8'>
-          <TextField
-            label='Full Name'
-            name='first-name'
-            autoComplete='given-name'
-            placeholder='Johnny'
-            required
-          />
-          <TextField
-            label='Email Address'
-            name='email'
-            autoComplete='email'
-            placeholder='www@email.com'
-            required
-          />
-          <TextField
-            label='Phone Number'
-            name='Phone'
-            type='number'
-            autoComplete='Phone'
-            placeholder='johnnybravo@gmail.com'
-            required
-          />
-          <div className='space-y-8 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:space-y-0'>
-            <TextField
-              label='Country'
-              name='Country'
-              autoComplete='off'
-              placeholder='Country'
-              required
-            />
-            <TextField
-              label='ZipCode'
-              name='Country'
-              autoComplete='off'
-              placeholder='Country'
-              required
-            />
-          </div>
-          <div className='space-y-8 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:space-y-0'>
-            <TextField
-              label='Status'
-              name='Country'
-              autoComplete='off'
-              placeholder='Country'
-              required
-            />
-            <TextField
-              label='Additional Field'
-              name='Country'
-              autoComplete='off'
-              placeholder='Country'
-              required
-            />
-          </div>
-        </form> */}
-
-        {/* Right Column: Cart Review Section */}
         {isPaymentSuccessful ? (
           <div className='mt-6 rounded-lg p-6 text-center text-white shadow-md'>
             <h2 className='text-2xl font-bold'>Payment Successful!</h2>
@@ -235,7 +162,7 @@ export default function Payment() {
                 label='Coupon Code'
                 name='couponCode'
                 placeholder='Enter coupon code'
-                labelClassName='text-gray-700' // Label color change
+                labelClassName='text-gray-700'
                 className='rounded-md p-2'
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
