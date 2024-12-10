@@ -7,7 +7,7 @@ import { ContainerOutline } from '@/components/shared/ContainerOutline'
 import { HeroContainer } from '@/components/shared/HeroContainer'
 import { Footer } from '@/components/shared/Footer'
 import Image from 'next/image'
-import imageProfile from '@/images/836.jpg' // Use the actual import here
+import imageProfile from '@/images/836.jpg'
 import {
   Camera02Icon,
   CloudUploadIcon,
@@ -75,7 +75,7 @@ export default function MyProfile() {
       const result = await response.data
       const status = await response.status
       if (status === 200) {
-        setProfilePicture(image) // Update to use the URL from the response
+        setProfilePicture(image)
         toast.success(result.message)
       } else {
         toast.error('Something went wrong!')
@@ -162,27 +162,29 @@ export default function MyProfile() {
 
   return (
     <Container className='max-w-4xl py-10 sm:max-w-6xl lg:max-w-7xl'>
-      <div className='lg:grid lg:grid-cols-2 lg:gap-x-8 xl:gap-x-36'>
-        {/* Left Column (Name, Email, and Bio Fields) */}
-        <div className='space-y-8'>
-          {/* Right Column (Profile Photo and File Upload) */}
-          <div className='flex flex-col items-center space-y-6'>
-            <div className='col-lg-6 relative mb-3 pt-4 text-center'>
-              <div className='relative'>
+      <div className='mx-auto flex w-full flex-col items-center justify-center gap-8 lg:flex-row lg:items-start lg:gap-x-16 xl:gap-x-24'>
+        <div className='w-full max-w-md space-y-8'>
+          <div className='flex flex-col items-center justify-center space-y-6'>
+            <div className='relative mb-3 pt-4 text-center'>
+              <div className='relative inline-block'>
                 <img
-                  src={profilePicture || imageProfile}
-                  width={110}
-                  height={110}
+                  src={
+                    profilePicture ||
+                    `https://ui-avatars.com/api/?name=${profile?.name || 'User'}&background=1e1b4b&color=fff`
+                  }
+                  width={130}
+                  height={130}
+                  loading='lazy'
                   alt='Profile Picture'
-                  className='max-h-[110px] min-h-[110px] min-w-[110px] max-w-[110px] rounded-full border-2 border-violet-500 object-cover shadow-inner-blur'
+                  className='border-3 max-h-[130px] min-h-[130px] min-w-[130px] max-w-[130px] rounded-full border-violet-500 object-cover shadow-lg transition-all duration-300 hover:shadow-xl'
                 />
                 <label
                   htmlFor='profile-pic-upload'
-                  className='absolute bottom-0 right-0 cursor-pointer'
+                  className='absolute bottom-1 right-1 cursor-pointer transition-transform duration-200 hover:scale-110'
                 >
                   <PencilEdit02Icon
-                    className='rounded-full bg-violet-600 p-1 text-white'
-                    size={30}
+                    className='rounded-full bg-violet-600 p-1.5 text-white shadow-md'
+                    size={35}
                   />
                 </label>
               </div>
@@ -197,12 +199,11 @@ export default function MyProfile() {
           </div>
           <form
             method='POST'
-            className='mt-9 px-6 pb-10 sm:px-10'
+            className='mt-6 rounded-xl p-6 shadow-md sm:p-8'
             onSubmit={handleProfleUpdate}
           >
-            <div className='space-y-8'>
-              {/* First Name and Last Name Fields */}
-              <div className='space-y-8 sm:grid sm:grid-cols-1 sm:gap-x-6 sm:space-y-0'>
+            <div className='space-y-6'>
+              <div className='space-y-6'>
                 <TextField
                   label='Name'
                   name='name'
@@ -215,8 +216,6 @@ export default function MyProfile() {
                   }
                 />
               </div>
-
-              {/* Email Field */}
               <TextField
                 label='Email'
                 name='email'
@@ -230,10 +229,8 @@ export default function MyProfile() {
                   setProfile({ ...profile, email: e.target.value })
                 }
               />
-
-              {/* Tour Bio Field */}
               <TextField
-                label='Tour Bio'
+                label='Your Bio'
                 name='bio'
                 autoComplete='off'
                 placeholder='Enter your bio'
@@ -243,9 +240,7 @@ export default function MyProfile() {
                   setProfile({ ...profile, bio: e.target.value })
                 }
               />
-
-              {/* Submit Button */}
-              <div className='mt-6'>
+              <div className='pt-2'>
                 <Button
                   type='submit'
                   size='md'
@@ -258,19 +253,17 @@ export default function MyProfile() {
                       fill='#fff'
                     />
                   ) : (
-                    'Submit'
+                    'Update Profile'
                   )}
                 </Button>
               </div>
             </div>
           </form>
         </div>
-        {/* Password Reset Container (Below Main Form) */}
-        <div className='relative z-10 flex flex-col'>
-          <ContainerOutline />
+        <div className='w-full max-w-md'>
           <form
             method='POST'
-            className='mt-9 px-6 pb-10 sm:px-10'
+            className='rounded-xl p-6 shadow-md sm:p-8'
             onSubmit={handlePasswordReset}
           >
             <FormHeader
@@ -278,7 +271,7 @@ export default function MyProfile() {
               description='Update your password below.'
               socialButtons={false}
             />
-            <div className='space-y-8'>
+            <div className='mt-6 space-y-6'>
               <TextField
                 label='Current Password'
                 name='current-password'
@@ -309,27 +302,27 @@ export default function MyProfile() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-            </div>
-
-            {/* Submit Button */}
-            <div className='mt-6'>
-              <Button
-                size='md'
-                type='submit'
-                className='w-full overflow-hidden'
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loading02Icon className='h-5 w-5 animate-spin' fill='#fff' />
-                ) : (
-                  'Change Password'
-                )}
-              </Button>
+              <div className='pt-2'>
+                <Button
+                  size='md'
+                  type='submit'
+                  className='w-full overflow-hidden'
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loading02Icon
+                      className='h-5 w-5 animate-spin'
+                      fill='#fff'
+                    />
+                  ) : (
+                    'Change Password'
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </div>
       </div>
-
       <Footer />
     </Container>
   )

@@ -8,6 +8,7 @@ import { api } from '@/api/api'
 import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
+import { Loading02Icon } from 'hugeicons-react'
 
 export default function Payment() {
   const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false)
@@ -15,7 +16,8 @@ export default function Payment() {
   const [discount, setDiscount] = useState(0)
   const [total, setTotal] = useState(0)
   const [couponCode, setCouponCode] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const searchParams = useSearchParams()
   const planName = searchParams.get('plan')
   const billing = searchParams.get('billing')
@@ -50,7 +52,7 @@ export default function Payment() {
       return
     }
 
-    setIsLoading(true)
+    setIsApplyingCoupon(true)
     try {
       const response = await api.get(
         `/apply-coupon?plan_name=${planName}&coupon_code=${couponCode}`
@@ -66,7 +68,7 @@ export default function Payment() {
       console.error(error)
       toast.error(error.response?.data?.error || 'Something went wrong!')
     } finally {
-      setIsLoading(false)
+      setIsApplyingCoupon(false)
     }
   }
 
@@ -90,12 +92,12 @@ export default function Payment() {
       return
     }
 
-    setIsLoading(true)
+    setIsProcessingPayment(true)
     try {
       const formData = {
         plan: planName,
         coupon: couponCode,
-        plan_type: billing
+        plan_type: billing,
       }
 
       const response = await api.post(`/payment/create`, formData, {
@@ -123,7 +125,7 @@ export default function Payment() {
       console.error(error)
       toast.error(error.response?.data?.error || 'Something went wrong!')
     } finally {
-      setIsLoading(false)
+      setIsProcessingPayment(false)
     }
   }
 
@@ -155,6 +157,19 @@ export default function Payment() {
           </div>
         ) : (
           <div className='space-y-4 rounded-lg p-4 text-white shadow-sm'>
+            <div className='flex items-center justify-center gap-2 rounded-lg border-2 border-violet-400 bg-gradient-to-r from-violet-400/20 to-transparent p-4 text-center'>
+              <p className='text-lg font-bold text-violet-400'>
+                Special Offer! 🎉
+              </p>
+              <p className='text-white'>
+                Use code{' '}
+                <span className='font-mono font-bold text-violet-400'>
+                  FIRST20
+                </span>{' '}
+                to get 20% off!
+              </p>
+            </div>
+
             <h2 className='mb-3 text-xl font-bold'>Have a coupon?</h2>
 
             <div className='mt-3'>
@@ -171,9 +186,13 @@ export default function Payment() {
                 type='button'
                 onClick={handleApplyCoupon}
                 className='mt-4 rounded-md py-2 text-white'
-                disabled={isLoading}
+                disabled={isApplyingCoupon}
               >
-                {isLoading ? 'Applying...' : 'Apply Coupon'}
+                {isApplyingCoupon ? (
+                  <Loading02Icon className='h-5 w-5 animate-spin' fill='#fff' />
+                ) : (
+                  'Apply Coupon'
+                )}
               </Button>
             </div>
             <div className='mt-8'>
@@ -195,10 +214,17 @@ export default function Payment() {
                 <Button
                   type='button'
                   className='w-full rounded-md px-6 py-2 text-white'
-                  disabled={isLoading}
+                  disabled={isProcessingPayment}
                   onClick={showRazorpay}
                 >
-                  {isLoading ? 'Proceeding...' : 'Proceed to Payment'}
+                  {isProcessingPayment ? (
+                    <Loading02Icon
+                      className='h-5 w-5 animate-spin'
+                      fill='#fff'
+                    />
+                  ) : (
+                    'Proceed to Payment'
+                  )}
                 </Button>
               </div>
             </div>

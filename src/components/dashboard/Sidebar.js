@@ -342,7 +342,6 @@ function AddPatientModal({ isOpen, onClose, isClosing, user, onPatientAdded }) {
     last_name: '',
     phone: '',
     age: '',
-    date_of_birth: '',
     gender: 'male',
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -361,7 +360,6 @@ function AddPatientModal({ isOpen, onClose, isClosing, user, onPatientAdded }) {
       last_name: '',
       phone: '',
       age: '',
-      date_of_birth: '',
       gender: 'male',
     })
   }
@@ -503,33 +501,20 @@ function AddPatientModal({ isOpen, onClose, isClosing, user, onPatientAdded }) {
             </div>
             <div>
               <label className='mb-1 block text-sm font-medium text-gray-300'>
-                Date of Birth
+                Gender
               </label>
-              <input
-                type='date'
-                name='date_of_birth'
-                value={formData.date_of_birth}
+              <select
+                name='gender'
+                value={formData.gender}
                 onChange={handleInputChange}
                 className='w-full transform rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2 text-sm text-gray-200 transition-all duration-200 hover:border-pink-500 focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400'
                 required
-              />
+              >
+                <option value='male'>Male</option>
+                <option value='female'>Female</option>
+                <option value='other'>Other</option>
+              </select>
             </div>
-          </div>
-          <div>
-            <label className='mb-1 block text-sm font-medium text-gray-300'>
-              Gender
-            </label>
-            <select
-              name='gender'
-              value={formData.gender}
-              onChange={handleInputChange}
-              className='w-full transform rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2 text-sm text-gray-200 transition-all duration-200 hover:border-pink-500 focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400'
-              required
-            >
-              <option value='male'>Male</option>
-              <option value='female'>Female</option>
-              <option value='other'>Other</option>
-            </select>
           </div>
           <div className='flex flex-col gap-2 pt-4 sm:flex-row sm:justify-end'>
             <button
