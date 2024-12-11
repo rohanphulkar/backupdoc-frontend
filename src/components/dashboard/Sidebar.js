@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,6 +9,153 @@ import { Loading02Icon, Menu02Icon } from 'hugeicons-react'
 import { api } from '@/api/api'
 import { useSelector } from 'react-redux'
 import { toast } from 'sonner'
+import { useDropzone } from 'react-dropzone'
+
+function DragDropInput() {
+  const [isPasting, setIsPasting] = useState(false)
+  const [image, setImage] = useState(null)
+  const user = useSelector((state) => state.auth.token)
+  const params = useParams()
+  const id = params?.id
+  const uploadImage = async (file) => {
+    if (!file) return
+
+    const toastId = toast.loading('Uploading X-ray...')
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const { status } = await api.post(
+        `/patient/upload-xray/${id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${user}` },
+        }
+      )
+
+      if (status === 200) {
+        toast.dismiss(toastId)
+        toast.success('X-Ray uploaded successfully')
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error(error)
+      toast.dismiss(toastId)
+      toast.error(error.response?.data?.error || 'Error uploading xray')
+    }
+  }
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const file = acceptedFiles[0]
+    if (file && file.type.startsWith('image/')) {
+      setImage(file)
+      await uploadImage(file)
+    } else {
+      toast.error('Please provide an image file')
+    }
+  }, [])
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png'],
+    },
+    maxFiles: 1,
+    onDrop: async ([file]) => {
+      if (file) {
+        try {
+          setImage(file)
+          await uploadImage(file)
+        } catch (err) {
+          toast.error('Error processing image')
+        }
+      }
+    },
+  })
+
+  useEffect(() => {
+    const handlePaste = async (e) => {
+      e.preventDefault()
+      setIsPasting(true)
+
+      try {
+        const items = e.clipboardData.items
+        const imageFile = Array.from(items).find((item) =>
+          item.type.startsWith('image')
+        )
+
+        if (imageFile) {
+          const file = imageFile.getAsFile()
+          setImage(file)
+          await uploadImage(file)
+        }
+      } catch (err) {
+        toast.error('Failed to paste image')
+      } finally {
+        setIsPasting(false)
+      }
+    }
+
+    document.addEventListener('paste', handlePaste)
+    return () => document.removeEventListener('paste', handlePaste)
+  }, [])
+
+  return (
+    <div className='mt-auto border-t border-gray-800 p-4'>
+      <div
+        {...getRootProps()}
+        className={`group relative flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed bg-gradient-to-br transition-all duration-300 ${
+          isDragActive || isPasting
+            ? 'scale-[1.02] border-pink-500 from-pink-500/20 to-purple-500/20 shadow-lg shadow-pink-500/20'
+            : 'border-gray-700 from-gray-800/30 to-gray-900/30 hover:border-pink-500/50 hover:from-pink-500/10 hover:to-purple-500/10 hover:shadow-md hover:shadow-pink-500/10'
+        }`}
+      >
+        <input {...getInputProps()} />
+
+        <div className='absolute inset-0 rounded-xl bg-gradient-to-br opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-20'></div>
+
+        <svg
+          className={`size-8 transition-all duration-300 ${
+            isDragActive || isPasting
+              ? 'scale-110 text-pink-500'
+              : 'text-gray-500 group-hover:text-pink-400'
+          }`}
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
+          />
+        </svg>
+
+        <div className='flex flex-col items-center gap-1 text-center'>
+          <p
+            className={`text-sm font-medium transition-colors duration-300 ${
+              isDragActive || isPasting
+                ? 'text-pink-500'
+                : 'text-gray-300 group-hover:text-pink-400'
+            }`}
+          >
+            Drop or paste X-ray image here
+          </p>
+          <p className='text-xs text-gray-500'>
+            Click to browse or use Ctrl+V to paste
+          </p>
+        </div>
+
+        {isPasting && (
+          <div className='absolute inset-0 flex items-center justify-center rounded-xl bg-black/20 backdrop-blur-sm'>
+            <Loading02Icon className='size-6 animate-spin text-pink-500' />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function Sidebar({ children }) {
   const router = useRouter()
@@ -20,6 +167,11 @@ export default function Sidebar({ children }) {
   const [patients, setPatients] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearching, setIsSearching] = useState(false)
+  const pathname = usePathname()
+  const isDashboardPatientPage =
+    /^\/dashboard\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+      pathname
+    )
 
   const fetchPatients = async () => {
     try {
@@ -263,11 +415,14 @@ export default function Sidebar({ children }) {
             </button>
           </div>
 
-          <div className='flex-1 overflow-hidden px-4'>
-            <h3 className='mb-2 text-sm font-semibold text-gray-400'>
-              Patients
-            </h3>
-            <div className='flex max-h-[calc(100vh-250px)] flex-col gap-2 overflow-y-auto pr-2 [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-thumb]:bg-pink-600 hover:[&::-webkit-scrollbar-thumb]:bg-pink-500 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-track]:bg-gray-800 [&::-webkit-scrollbar]:w-2'>
+          <div className='flex flex-1 flex-col overflow-hidden'>
+            <div className='px-4'>
+              <h3 className='mb-2 text-sm font-semibold text-gray-400'>
+                Patients
+              </h3>
+            </div>
+
+            <div className='flex-1 overflow-y-auto px-4 [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-thumb]:bg-pink-600 hover:[&::-webkit-scrollbar-thumb]:bg-pink-500 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-track]:bg-gray-800 [&::-webkit-scrollbar]:w-2'>
               {patients.map((patient) => (
                 <div key={patient.id} className='group relative'>
                   <Link
@@ -314,6 +469,7 @@ export default function Sidebar({ children }) {
                 </div>
               ))}
             </div>
+            {isDashboardPatientPage && <DragDropInput />}
           </div>
         </div>
       </div>

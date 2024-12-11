@@ -9,7 +9,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline'
-import { Loading02Icon, MultiplicationSignIcon } from 'hugeicons-react'
+import {
+  ArrowTurnDownIcon,
+  ArrowTurnUpIcon,
+  Loading02Icon,
+  MultiplicationSignIcon,
+  ReloadIcon,
+} from 'hugeicons-react'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -69,6 +75,8 @@ const AnalysisDashboard = ({ id }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
+  const [deletingLabel, setDeletingLabel] = useState(false)
+  const [changingDetection, setChangingDetection] = useState(false)
 
   const getColorsByPercentage = (percentage) => {
     if (percentage >= 0 && percentage < 1) {
@@ -146,7 +154,7 @@ const AnalysisDashboard = ({ id }) => {
     } finally {
       setLoading(false)
     }
-  }, [id, token])
+  }, [id])
 
   useEffect(() => {
     if (id && token) {
@@ -201,7 +209,7 @@ const AnalysisDashboard = ({ id }) => {
           },
         }
       )
-      if (status == 200) {
+      if (status === 200) {
         toast.success(
           'Report generation started. You will receive an email when ready.'
         )
@@ -256,11 +264,10 @@ const AnalysisDashboard = ({ id }) => {
     }
   }, [token])
 
-  const [deletingLabel, setDeletingLabel] = useState(false)
-
   const deleteLegend = async (id) => {
     try {
       setDeletingLabel(true)
+      setChangingDetection(true)
       const { data: result, status } = await api.delete(
         `/predict/delete-label/${id}`,
         {
@@ -272,8 +279,13 @@ const AnalysisDashboard = ({ id }) => {
           ...prediction,
           predicted_image: result.annotated_image,
         })
-        setLegends(legends.filter((legend) => legend.id !== id))
-        toast.success('Detection removed from image')
+        setLegends(
+          legends.map((legend) =>
+            legend.id === id ? { ...legend, include: false } : legend
+          )
+        )
+
+        toast.success('Detection removed.')
       } else {
         toast.error('Something went wrong!')
       }
@@ -282,12 +294,45 @@ const AnalysisDashboard = ({ id }) => {
       toast.error(error.response?.data?.error || 'Something went wrong!')
     } finally {
       setDeletingLabel(false)
+      setChangingDetection(false)
+    }
+  }
+
+  const includeLabel = async (id) => {
+    try {
+      setChangingDetection(true)
+      const { data: result, status } = await api.get(
+        `/predict/include-label/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      if (status === 200) {
+        setPrediction({
+          ...prediction,
+          predicted_image: result.annotated_image,
+        })
+        setLegends(
+          legends.map((legend) =>
+            legend.id === id ? { ...legend, include: true } : legend
+          )
+        )
+        toast.success('Detection included.')
+      } else {
+        toast.error('Something went wrong!')
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error.response?.data?.error || 'Something went wrong!')
+    } finally {
+      setChangingDetection(false)
     }
   }
 
   const rotateClockwise = () => {
     setRotated((prev) => (prev + 90) % 360)
   }
+
   const rotateAntiClockwise = () => {
     setRotated((prev) => (prev - 90 + 360) % 360)
   }
@@ -433,7 +478,7 @@ const AnalysisDashboard = ({ id }) => {
 
             {/* Center Column - Image Display */}
             <div className='flex-1'>
-              {prediction ? (
+              {prediction && !changingDetection ? (
                 <div
                   className='relative rounded-2xl bg-gray-800/50 p-4 shadow-xl backdrop-blur-lg transition-all duration-300 hover:bg-gray-800/60'
                   ref={windowRef}
@@ -532,49 +577,70 @@ const AnalysisDashboard = ({ id }) => {
                 </h3>
                 <div className='bud-scrollbar max-h-[50vh] space-y-2 overflow-y-auto'>
                   {filteredLegends.length > 0 ? (
-                    filteredLegends.map((legend, index) => {
-                      const colors = getColorsByPercentage(legend.percentage)
-                      return (
-                        <div
-                          key={index}
-                          className={`group relative rounded-lg px-3 py-2 transition-all duration-300 ease-in-out ${
-                            deletingLabel
-                              ? 'pointer-events-none opacity-50'
-                              : ''
-                          } ${colors.bg} ${colors.hover}`}
-                        >
-                          <div className='flex items-center gap-3'>
+                    <>
+                      {/* Show included legends first */}
+                      {filteredLegends
+                        .sort(
+                          (a, b) => (b.include === true) - (a.include === true)
+                        )
+                        .map((legend, index) => {
+                          const colors = getColorsByPercentage(
+                            legend.percentage
+                          )
+                          return (
                             <div
-                              className={`h-2.5 w-2.5 rounded-full ${colors.dot} animate-pulse`}
-                            ></div>
-                            <span className='flex-1 text-[13px] font-medium text-gray-200'>
-                              {legend.name}
-                            </span>
-                            <span
-                              className={`text-[13px] font-semibold ${colors.text}`}
+                              key={index}
+                              className={`group relative rounded-lg px-3 py-2 transition-all duration-300 ease-in-out ${
+                                deletingLabel
+                                  ? 'pointer-events-none opacity-50'
+                                  : legend.include === false
+                                    ? 'opacity-50'
+                                    : ''
+                              } ${colors.bg} ${colors.hover}`}
                             >
-                              {legend.percentage}%
-                            </span>
-                          </div>
-                          <button
-                            onClick={() => {
-                              deleteLegend(legend.id)
-                            }}
-                            disabled={deletingLabel}
-                            className='absolute left-0 top-0 z-10 hidden h-full w-full items-center justify-center rounded-lg bg-red-500/90 transition-all duration-300 ease-in-out group-hover:flex group-hover:py-2'
-                          >
-                            {deletingLabel ? (
-                              <Loading02Icon className='animate-spin text-gray-50' />
-                            ) : (
-                              <MultiplicationSignIcon
-                                className='text-gray-50'
-                                fill='#ffffff'
-                              />
-                            )}
-                          </button>
-                        </div>
-                      )
-                    })
+                              <div className='flex items-center gap-3'>
+                                <div
+                                  className={`h-2.5 w-2.5 rounded-full ${colors.dot} animate-pulse`}
+                                ></div>
+                                <span className='flex-1 text-[13px] font-medium text-gray-200'>
+                                  {legend.name}
+                                </span>
+                                <span
+                                  className={`text-[13px] font-semibold ${colors.text}`}
+                                >
+                                  {legend.percentage}%
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  if (legend.include === false) {
+                                    includeLabel(legend.id)
+                                  } else {
+                                    deleteLegend(legend.id)
+                                  }
+                                }}
+                                disabled={deletingLabel}
+                                className={`absolute left-0 top-0 z-10 hidden h-full w-full items-center justify-center rounded-lg transition-all duration-300 ease-in-out group-hover:flex group-hover:py-2 ${
+                                  legend.include === true
+                                    ? 'bg-red-500/90'
+                                    : 'bg-green-500/90'
+                                }`}
+                              >
+                                {deletingLabel ? (
+                                  <Loading02Icon className='animate-spin text-gray-50' />
+                                ) : legend.include === false ? (
+                                  <ArrowTurnUpIcon className='-rotate-90 text-gray-50' />
+                                ) : (
+                                  <MultiplicationSignIcon
+                                    className='text-gray-50'
+                                    fill='#ffffff'
+                                  />
+                                )}
+                              </button>
+                            </div>
+                          )
+                        })}
+                    </>
                   ) : (
                     <div className='text-center text-sm text-gray-400'>
                       No detections above threshold

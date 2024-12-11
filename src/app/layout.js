@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en' className={clsx('scroll-smooth')}>
       <body className='bg-zinc-900'>
-        <Toaster />
+        <Toaster closeButton richColors={true} />
         <ReduxProvider>
           <CheckTokenValidity />
           <ProtectedRoutes />

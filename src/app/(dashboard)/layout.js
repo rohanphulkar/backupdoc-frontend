@@ -17,7 +17,7 @@ export default function Layout({ children }) {
         <link rel='icon' href='./favicon.ico' />
       </head>
       <body className='relative bg-zinc-900'>
-        <Toaster />
+        <Toaster closeButton richColors={true} />
         <Sidebar>{children}</Sidebar>
         <Feedback />
       </body>
