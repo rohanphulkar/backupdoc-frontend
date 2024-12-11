@@ -26,9 +26,12 @@ export default function MyProfile() {
     name: '',
     email: '',
     bio: '',
+    account_type: '',
+    credits: 0,
   })
   const [isLoading, setIsLoading] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [cancellingSubscription, setCancellingSubscription] = useState(false)
 
   const fetchProfile = async () => {
     try {
@@ -117,6 +120,32 @@ export default function MyProfile() {
       setIsLoading(false)
     }
   }
+  console.log(profile)
+  const handleCancelSubscription = async () => {
+    try {
+      setCancellingSubscription(true)
+      const { data: result, status } = await api.get(
+        `/cancel-subscription?subscription_id=`,
+        {
+          headers: {
+            Authorization: `Bearer ${user}`,
+          },
+        }
+      )
+      if (status === 200) {
+        toast.success(result.message)
+        fetchProfile()
+      } else {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.error || 'Failed to cancel subscription'
+      )
+    } finally {
+      setCancellingSubscription(false)
+    }
+  }
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -162,6 +191,116 @@ export default function MyProfile() {
 
   return (
     <Container className='max-w-4xl py-10 sm:max-w-6xl lg:max-w-7xl'>
+      {/* Account Status Card */}
+      <div className='mx-auto max-w-4xl overflow-hidden rounded-xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 shadow-xl ring-1 ring-white/10 backdrop-blur-sm'>
+        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+          <div className='space-y-3'>
+            <div className='flex items-center gap-2'>
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-medium ${
+                  profile.account_type === 'premium'
+                    ? 'bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-500/30'
+                    : profile.account_type === 'doctor'
+                      ? 'bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-500/30'
+                      : 'bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-500/30'
+                }`}
+              >
+                {profile.account_type === 'premium'
+                  ? 'Premium'
+                  : profile.account_type === 'doctor'
+                    ? 'Doctor'
+                    : 'Free'}
+              </span>
+              <h3 className='text-lg font-semibold text-white'>Account</h3>
+            </div>
+            <div className='flex w-fit items-center gap-2 rounded-lg bg-indigo-500/10 px-3 py-1.5 ring-1 ring-indigo-500/20'>
+              <p className='text-sm font-medium text-emerald-400'>
+                {profile.credits} Credits Available
+              </p>
+            </div>
+          </div>
+          <div className='flex flex-col gap-3 sm:flex-row'>
+            {(profile.account_type === 'free' ||
+              profile.account_type === 'doctor') && (
+              <button className='group relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'>
+                <span className='absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100'></span>
+                <span className='relative flex items-center justify-center gap-2'>
+                  <span>Upgrade Now</span>
+                  <svg
+                    className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M13 7l5 5m0 0l-5 5m5-5H6'
+                    />
+                  </svg>
+                </span>
+              </button>
+            )}
+            {(profile.account_type === 'doctor' ||
+              profile.account_type === 'premium') && (
+              <button
+                onClick={() => {
+                  profile?.subscription_id &&
+                    handleCancelSubscription(profile?.subscription_id)
+                }}
+                disabled={cancellingSubscription}
+                className='group relative overflow-hidden rounded-lg bg-gradient-to-r from-rose-500 to-red-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100'
+              >
+                <span className='absolute inset-0 bg-gradient-to-r from-rose-600 to-red-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100'></span>
+                <span className='relative flex items-center justify-center gap-2'>
+                  {cancellingSubscription ? (
+                    <>
+                      <span>Cancelling</span>
+                      <svg
+                        className='h-4 w-4 animate-spin'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                      >
+                        <circle
+                          className='opacity-25'
+                          cx='12'
+                          cy='12'
+                          r='10'
+                          stroke='currentColor'
+                          strokeWidth='4'
+                        />
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        />
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      <span>Cancel Subscription</span>
+                      <svg
+                        className='h-4 w-4 transition-transform duration-300 group-hover:rotate-90'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M6 18L18 6M6 6l12 12'
+                        />
+                      </svg>
+                    </>
+                  )}
+                </span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
       <div className='mx-auto flex w-full flex-col items-center justify-center gap-8 lg:flex-row lg:items-start lg:gap-x-16 xl:gap-x-24'>
         <div className='w-full max-w-md space-y-8'>
           <div className='flex flex-col items-center justify-center space-y-6'>
@@ -197,6 +336,7 @@ export default function MyProfile() {
               />
             </div>
           </div>
+
           <form
             method='POST'
             className='mt-6 rounded-xl p-6 shadow-md sm:p-8'

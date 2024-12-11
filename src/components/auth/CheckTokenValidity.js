@@ -9,8 +9,14 @@ export default function CheckTokenValidity() {
   const user = useSelector((state) => state.auth.token)
   const dispatch = useDispatch()
 
+  const handleLogout = () => {
+    dispatch(logout())
+    window.location.href = '/signin'
+  }
+
   const checkTokenValidity = async () => {
-    if (!user || user === '' || user === null || user === undefined) {
+    // Return early if no token exists
+    if (!user) {
       return
     }
 
@@ -21,19 +27,21 @@ export default function CheckTokenValidity() {
         },
       })
 
-      if (response.status !== 200) {
-        dispatch(logout())
-        window.location.href = '/signin'
+      const { status } = response
+      if (status !== 200) {
+        handleLogout()
       }
     } catch (error) {
-      console.error(error)
-      dispatch(logout())
-      window.location.href = '/signin'
+      console.error('Token validation error:', error)
+      handleLogout()
     }
   }
 
   useEffect(() => {
-    checkTokenValidity()
+    const validateToken = async () => {
+      await checkTokenValidity()
+    }
+    validateToken()
   }, [user])
 
   return null
