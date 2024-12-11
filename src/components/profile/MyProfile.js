@@ -121,11 +121,11 @@ export default function MyProfile() {
     }
   }
   console.log(profile)
-  const handleCancelSubscription = async () => {
+  const handleCancelSubscription = async (subscription_id) => {
     try {
       setCancellingSubscription(true)
       const { data: result, status } = await api.get(
-        `/cancel-subscription?subscription_id=`,
+        `/cancel-subscription?subscription_id=${subscription_id}`,
         {
           headers: {
             Authorization: `Bearer ${user}`,
@@ -222,7 +222,12 @@ export default function MyProfile() {
           <div className='flex flex-col gap-3 sm:flex-row'>
             {(profile.account_type === 'free' ||
               profile.account_type === 'doctor') && (
-              <button className='group relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'>
+              <button
+                onClick={() => {
+                  window.location.href = '/pricing'
+                }}
+                className='group relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'
+              >
                 <span className='absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100'></span>
                 <span className='relative flex items-center justify-center gap-2'>
                   <span>Upgrade Now</span>
