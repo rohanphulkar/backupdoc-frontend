@@ -6,7 +6,7 @@ import { Button } from '@/components/shared/Button'
 import { Container } from '@/components/shared/Container'
 import { api } from '@/api/api'
 import { toast } from 'sonner'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { Loading02Icon } from 'hugeicons-react'
 
@@ -18,36 +18,46 @@ export default function Payment() {
   const [couponCode, setCouponCode] = useState('')
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const planName = searchParams.get('plan')
   const billing = searchParams.get('billing')
+  const couponFromUrl = searchParams.get('coupon')
   const user = useSelector((state) => state.auth.token)
 
   const fetchPlanDetails = async () => {
+    setIsLoadingPlan(true)
     try {
       const response = await api.get(
         `/fetch-plan-details?plan_name=${planName}`
       )
       if (response.status === 200) {
-        setSubtotal(response.data.amount / 100)
-        setTotal(response.data.amount / 100)
+        setSubtotal(response.data.prices[billing])
+        setTotal(response.data.prices[billing])
       } else {
         toast.error('Something went wrong!')
       }
     } catch (error) {
       console.error(error)
       toast.error(error.response?.data?.error || 'Something went wrong!')
+    } finally {
+      setIsLoadingPlan(false)
     }
   }
 
   useEffect(() => {
     if (planName) {
       fetchPlanDetails()
+      if (couponFromUrl) {
+        setCouponCode(couponFromUrl)
+        handleApplyCoupon(couponFromUrl)
+      }
     }
-  }, [planName])
+  }, [planName, couponFromUrl])
 
-  const handleApplyCoupon = async () => {
-    if (!couponCode) {
+  const handleApplyCoupon = async (code = couponCode) => {
+    if (!code) {
       toast.error('Please enter a coupon code')
       return
     }
@@ -55,12 +65,17 @@ export default function Payment() {
     setIsApplyingCoupon(true)
     try {
       const response = await api.get(
-        `/apply-coupon?plan_name=${planName}&coupon_code=${couponCode}`
+        `/apply-coupon?plan_name=${planName}&coupon_code=${code}&billing=${billing}`
       )
       if (response.status === 200) {
         setSubtotal(response.data.original_amount)
         setDiscount(response.data.discount_amount)
-        setTotal(response.data.final_amount)
+        setTotal(response.data.original_amount)
+        toast.success('Coupon applied successfully!')
+
+        const params = new URLSearchParams(window.location.search)
+        params.set('coupon', code)
+        router.push(`${window.location.pathname}?${params.toString()}`)
       } else {
         toast.error('Something went wrong!')
       }
@@ -108,7 +123,9 @@ export default function Payment() {
 
       const razorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        subscription_id: response.data.subscription_id,
+        amount: response?.data?.amount * 100, // Convert to paise
+        currency: 'INR',
+        order_id: response?.data?.order_id,
         name: 'Backupdoc',
         description: 'Subscription Payment',
         handler: async (response) => {
@@ -121,6 +138,8 @@ export default function Payment() {
 
       const rzp1 = new window.Razorpay(razorpayOptions)
       rzp1.open()
+
+      console.log(response.data)
     } catch (error) {
       console.error(error)
       toast.error(error.response?.data?.error || 'Something went wrong!')
@@ -150,7 +169,7 @@ export default function Payment() {
                 </div>
                 <div className='mt-2 flex w-full items-center justify-between border-t border-violet-200/[.06] pt-3 text-lg text-white'>
                   <p>Total</p>
-                  <p>&#8377;{total}</p>
+                  <p>&#8377;{total - discount}</p>
                 </div>
               </div>
             </div>
@@ -184,7 +203,7 @@ export default function Payment() {
               />
               <Button
                 type='button'
-                onClick={handleApplyCoupon}
+                onClick={() => handleApplyCoupon()}
                 className='mt-4 rounded-md py-2 text-white'
                 disabled={isApplyingCoupon}
               >
@@ -199,7 +218,11 @@ export default function Payment() {
               <div className='mt-6 space-y-3 rounded-lg border border-violet-200/[.06] bg-zinc-950/[.01] p-4 font-semibold shadow-inner-blur'>
                 <div className='flex w-full items-center justify-between text-gray-400'>
                   <p>Subtotal</p>
-                  <p>&#8377;{subtotal}</p>
+                  {isLoadingPlan ? (
+                    <p className='animate-pulse'>Loading...</p>
+                  ) : (
+                    <p>&#8377;{subtotal}</p>
+                  )}
                 </div>
                 <div className='flex w-full items-center justify-between text-gray-400'>
                   <p>Discount</p>
@@ -207,7 +230,11 @@ export default function Payment() {
                 </div>
                 <div className='mt-2 flex w-full items-center justify-between border-t border-violet-200/[.06] pt-3 text-lg text-white'>
                   <p>Total</p>
-                  <p>&#8377;{total}</p>
+                  {isLoadingPlan ? (
+                    <p className='animate-pulse'>Loading...</p>
+                  ) : (
+                    <p>&#8377;{total - discount}</p>
+                  )}
                 </div>
               </div>
               <div className='mt-6 flex justify-end'>

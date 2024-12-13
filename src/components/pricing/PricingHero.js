@@ -2,14 +2,12 @@
 
 import Image from 'next/image'
 import { PricingCard } from './PricingCard'
-import { InvestorTestimonials } from './InvestorTestimonials'
 import { Container } from '@/components/shared/Container'
 import { ContentPill } from '@/components/shared/ContentPill'
 import { StarField } from '@/components/shared/StarField'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
-
 import cosmicButterfly from '@/images/cosmic-butterfly.png'
 import TagsStackIcon from '@/icons/nucleo/tags-stack-16.svg'
 import { useSelector } from 'react-redux'
@@ -18,58 +16,82 @@ import { toast } from 'sonner'
 
 const pricingPlans = [
   {
-    title: 'Free',
-    price: {
-      monthly: 'Free',
-      yearly: 'Free',
-    },
-    description:
-      'Ideal for individual professionals and small teams just beginning their journey looking for a streamlined solution.',
-    popular: false,
-    accountType: 'free',
-  },
-  {
     title: 'Starter',
-    link: '/checkout?plan=doctor',
+    link: '/checkout?plan=starter',
     price: {
       monthly: '999',
-      yearly: '9590',
+      half_yearly: '3999',
+      yearly: '5999',
+    },
+    originalPrice: {
+      half_yearly: '5994',
+      yearly: '11988',
     },
     description:
       'Ideal for individual professionals and small teams just beginning their journey looking for a streamlined solution.',
     popular: false,
-    accountType: 'doctor',
+    accountType: 'starter',
+    opgSupport: false,
+    credits: 50
   },
   {
     title: 'Pro',
-    link: '/checkout?plan=premium',
+    link: '/checkout?plan=pro',
     price: {
       monthly: '1999',
-      yearly: '19190',
+      half_yearly: '8999',
+      yearly: '13999',
+    },
+    originalPrice: {
+      half_yearly: '11994',
+      yearly: '23988',
     },
     description:
       'Designed for growing teams and businesses seeking to enhance their productivity.',
     popular: true,
-    accountType: 'premium',
+    accountType: 'pro',
+    opgSupport: true,
+    credits: 300
+  },
+  {
+    title: 'Max',
+    link: '/checkout?plan=max',
+    price: {
+      monthly: '2999',
+      half_yearly: '14999',
+      yearly: '19999',
+    },
+    originalPrice: {
+      half_yearly: '17994',
+      yearly: '35988',
+    },
+    description:
+      'Designed for growing teams and businesses seeking to enhance their productivity.',
+    popular: false,
+    accountType: 'max',
+    opgSupport: true,
+    credits: 600
   },
   {
     title: 'Enterprise',
     link: '/contact',
     price: {
       monthly: 'Custom',
+      half_yearly: 'Custom',
       yearly: 'Custom',
     },
     description:
       'Tailored for large organizations requiring a comprehensive solution that evolves with your enterprise.',
     popular: false,
     accountType: 'enterprise',
+    opgSupport: true,
+    credits: 'Custom'
   },
 ]
 
 export function PricingHero() {
   const [billingType, setBillingType] = useState('monthly')
   const router = useRouter()
-
   const user = useSelector((state) => state.auth.token)
   const [profile, setProfile] = useState(null)
   const [accountType, setAccountType] = useState(null)
@@ -108,7 +130,7 @@ export function PricingHero() {
   }
 
   const isUpgradable = (planAccountType) => {
-    const accountTypes = ['free', 'doctor', 'premium', 'enterprise']
+    const accountTypes = ['free', 'starter', 'pro', 'max', 'enterprise']
     const currentIndex = accountTypes.indexOf(accountType)
     const planIndex = accountTypes.indexOf(planAccountType)
     return planIndex > currentIndex
@@ -117,13 +139,11 @@ export function PricingHero() {
   return (
     <div className='pb-12 pt-20 md:pb-20 lg:py-28'>
       <div className='relative'>
-        {/* Stars */}
         <div className='absolute inset-0 -z-10' aria-hidden='true'>
           <StarField />
         </div>
 
         <Container className='max-w-4xl gap-16 lg:max-w-screen-xl'>
-          {/* Text content */}
           <div className='relative z-10 flex flex-col items-center'>
             <ContentPill
               Icon={TagsStackIcon}
@@ -140,9 +160,7 @@ export function PricingHero() {
             </p>
           </div>
 
-          {/* Pricing cards */}
           <div className='mx-auto mt-12 flex max-w-lg flex-col items-center sm:mt-16 sm:max-w-xl lg:mx-0 lg:mt-20 lg:max-w-none'>
-            {/* Monthly/Annual toggle */}
             <div className='flex items-center rounded-full bg-zinc-950/[.01] shadow-inner-blur'>
               <div className='flex h-full w-full items-center space-x-2 rounded-full border border-violet-200/[.06] px-1 py-1'>
                 <button
@@ -155,6 +173,17 @@ export function PricingHero() {
                   )}
                 >
                   Monthly
+                </button>
+                <button
+                  onClick={() => setBillingType('half_yearly')}
+                  className={cn(
+                    'group relative inline-flex items-center overflow-hidden rounded-full px-4 py-2 text-sm font-semibold leading-4 antialiased',
+                    billingType === 'half_yearly'
+                      ? 'bg-btn-primary text-violet-50 shadow-btn-primary'
+                      : 'text-violet-50 hover:text-white'
+                  )}
+                >
+                  6 Months
                 </button>
                 <button
                   onClick={() => setBillingType('yearly')}
@@ -170,7 +199,6 @@ export function PricingHero() {
               </div>
             </div>
 
-            {/* Plans */}
             <div className='relative'>
               <div className='absolute -bottom-64 -left-96 -right-96 top-0 -z-10'>
                 <Image
@@ -186,12 +214,13 @@ export function PricingHero() {
                     key={`pricing-plans-mobile-${plan.title}`}
                     className='flex flex-1 flex-col space-y-8 lg:space-y-0'
                   >
-                    {/* Pricing card */}
                     <PricingCard
                       plan={plan}
                       price={plan.price[billingType]}
                       billingType={billingType}
-                      onPlanClick={() => handlePlanClick(`${plan.link}&billing=${billingType}`)}
+                      onPlanClick={() =>
+                        handlePlanClick(`${plan.link}&billing=${billingType}`)
+                      }
                       disabled={!isUpgradable(plan.accountType)}
                       message={
                         accountType === plan.accountType
@@ -200,6 +229,10 @@ export function PricingHero() {
                             ? 'Not Available'
                             : ''
                       }
+                      credits={plan.credits}
+                      opgSupport={plan.opgSupport}
+                      originalPrice={plan.originalPrice?.[billingType]}
+                      isAuthenticated={!!user}
                     />
                   </div>
                 ))}
@@ -208,8 +241,6 @@ export function PricingHero() {
           </div>
         </Container>
       </div>
-
-      {/* <InvestorTestimonials /> */}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { useSelector } from 'react-redux'
@@ -8,6 +8,8 @@ import { api } from '@/api/api'
 import { toast } from 'sonner'
 import { Loading02Icon } from 'hugeicons-react'
 import { useRouter } from 'next/navigation'
+import ReactCrop from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css'
 
 const UploadModal = ({ isOpen, onClose, id, user, fetchXrays }) => {
   const [uploadPreview, setUploadPreview] = useState(null)
@@ -236,6 +238,8 @@ const PatientPage = () => {
   const [doctor, setDoctor] = useState(null)
   const [xrays, setXrays] = useState([])
   const router = useRouter()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [imageToEdit, setImageToEdit] = useState(null)
 
   const fetchPatient = async () => {
     try {
@@ -375,6 +379,30 @@ const PatientPage = () => {
                         }`}
                       />
                     )}
+                    {!image.annotated_image && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setImageToEdit(image)
+                          setIsEditModalOpen(true)
+                        }}
+                        className='absolute right-2 top-2 z-10 rounded-lg bg-gray-800/80 p-1.5 text-white hover:bg-gray-700/80'
+                      >
+                        <svg
+                          className='h-4 w-4'
+                          fill='none'
+                          stroke='currentColor'
+                          viewBox='0 0 24 24'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
+                          />
+                        </svg>
+                      </button>
+                    )}
                     <div
                       className={`absolute inset-0 transition-colors ${
                         selectedImage === image.id
@@ -411,6 +439,17 @@ const PatientPage = () => {
       </div>
 
       {isAnalyzing && analyzeLoader()}
+      {isEditModalOpen && (
+        <EditXrayModal
+          image={imageToEdit}
+          onClose={() => {
+            setIsEditModalOpen(false)
+            setImageToEdit(null)
+          }}
+          user={user}
+          fetchXrays={fetchXrays}
+        />
+      )}
     </div>
   )
 }
@@ -492,6 +531,180 @@ function analyzeLoader() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EditXrayModal({ image, onClose, user, fetchXrays }) {
+  const [crop, setCrop] = useState({ unit: '%', width: 30 })
+  const [completedCrop, setCompletedCrop] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const imgRef = useRef(null)
+
+  const onImageLoad = (e) => {
+    const { width, height } = e.currentTarget
+    const crop = centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 90,
+        },
+        width,
+        height
+      ),
+      width,
+      height
+    )
+    setCrop(crop)
+  }
+
+  const handleSave = async () => {
+    if (!completedCrop || !imgRef.current) return
+
+    try {
+      setIsLoading(true)
+
+      // Create a temporary image element
+      const img = document.createElement('img')
+      img.crossOrigin = 'anonymous'
+
+      // Set up promise to handle image loading
+      const imageLoadPromise = new Promise((resolve, reject) => {
+        img.onload = () => resolve(img)
+        img.onerror = reject
+        img.src = image?.original_image
+      })
+
+      // Wait for image to load
+      const loadedImg = await imageLoadPromise
+
+      const canvas = document.createElement('canvas')
+      const scaleX = loadedImg.naturalWidth / imgRef.current.width
+      const scaleY = loadedImg.naturalHeight / imgRef.current.height
+      canvas.width = completedCrop.width
+      canvas.height = completedCrop.height
+      const ctx = canvas.getContext('2d')
+
+      ctx.drawImage(
+        loadedImg,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        completedCrop.width,
+        completedCrop.height
+      )
+
+      // Convert canvas to blob
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob)
+            } else {
+              reject(new Error('Canvas to Blob conversion failed'))
+            }
+          },
+          'image/jpeg',
+          1
+        )
+      })
+
+      // Create file-like object with timestamp in filename
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const filename = `cropped-xray-${timestamp}.jpg`
+      const croppedImageFile = new Blob([blob], { type: 'image/jpeg' })
+
+      // Create form data
+      const formData = new FormData()
+      formData.append('file', croppedImageFile, filename)
+
+      const { status } = await api.patch(
+        `/patient/update-xray-image/${image.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user}`,
+          },
+        }
+      )
+
+      if (status === 200) {
+        toast.success('X-Ray cropped successfully')
+        fetchXrays()
+        onClose()
+      }
+    } catch (error) {
+      console.error('Error cropping image:', error)
+      toast.error(error.response?.data?.error || 'Error cropping xray')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-sm'>
+      <div className='w-full max-w-md rounded-lg border border-gray-800 bg-gray-900/90 p-4 shadow-xl backdrop-blur-xl'>
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-gray-100'>Crop X-Ray</h2>
+          <button
+            onClick={onClose}
+            className='text-gray-400 hover:text-gray-200'
+          >
+            <svg
+              className='h-5 w-5'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M6 18L18 6M6 6l12 12'
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className='max-h-full max-w-full overflow-hidden rounded-lg'>
+          <ReactCrop
+            crop={crop}
+            onChange={(c) => setCrop(c)}
+            onComplete={(c) => setCompletedCrop(c)}
+          >
+            <img
+              ref={imgRef}
+              src={image?.original_image}
+              alt='X-Ray to crop'
+              onLoad={onImageLoad}
+              crossOrigin='anonymous'
+              className='max-h-16 w-full object-contain'
+            />
+          </ReactCrop>
+        </div>
+
+        <div className='mt-6 flex justify-end gap-3'>
+          <button
+            onClick={onClose}
+            className='rounded-lg px-4 py-2 text-sm text-gray-400 hover:bg-gray-800'
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={
+              !completedCrop?.width || !completedCrop?.height || isLoading
+            }
+            className='rounded-lg bg-pink-600 px-4 py-2 text-sm text-white hover:bg-pink-700'
+          >
+            {isLoading ? 'Saving...' : 'Save Crop'}
+          </button>
         </div>
       </div>
     </div>
